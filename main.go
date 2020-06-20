@@ -23,13 +23,12 @@ func main() {
 	fs := http.FileServer(http.Dir("assets"))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
-	// Get the original url from shorturl
-	//r.HandleFunc()
-
 	// Generate shorturl handler.
 	r.HandleFunc("/generate", handlers.GenerateHandler)
 	// Serving IndexHandler
 	r.HandleFunc("/", handlers.IndexHandler)
+	// Get the original url from shorturl
+	r.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 	// Starting Server.
 	log.Println("Starting Server at : ", port)
 	log.Fatal(http.ListenAndServe(":"+port, r))

@@ -25,11 +25,11 @@ var client *mongo.Client
 var ctx = context.Background()
 
 type URL struct {
-	ShortURL       string    `json:"short_url"`
-	OriginalURL    string    `json:"original_url"`
-	CreationDate   time.Time `json:"creation_date"`
-	ExpirationDate time.Time `json:"expiration_date"`
-	UserID         int       `json:"user_id"`
+	ShortURL       string    `bson:"short_url"`
+	OriginalURL    string    `bson:"original_url"`
+	CreationDate   time.Time `bson:"creation_date"`
+	ExpirationDate time.Time `bson:"expiration_date"`
+	UserID         int       `bson:"user_id"`
 }
 
 func init() {
@@ -57,7 +57,15 @@ func init() {
 func (url *URL) InsertURL() error {
 	url.prepareURL()
 	collection := GetMongoClient().Database("shorturl").Collection("url")
-	res, err := collection.InsertOne(ctx, bson.M{"_id": url.ShortURL, "data": url})
+	data := bson.M{
+		"_id":             url.ShortURL,
+		"short_url":       url.ShortURL,
+		"original_url":    url.OriginalURL,
+		"creation_date":   url.CreationDate,
+		"expiration_date": url.ExpirationDate,
+		"user_id":         url.UserID,
+	}
+	res, err := collection.InsertOne(ctx, data)
 	if err != nil {
 		log.Println("Error while inserting into DB : ", err)
 		return err
@@ -89,18 +97,18 @@ func (url *URL) prepareURL() {
 // If the current date is after or equal to expiry date then we are not returning anything.
 // It returns the original url and error.
 func (url *URL) GetURL() (string, error) {
+	fmt.Println("Inside GetURL()")
 	collection := GetMongoClient().Database("shorturl").Collection("url")
 	filter := bson.M{
 		"_id": url.ShortURL,
-		"data.expirationdate": bson.M{
+		"expiration_date": bson.M{
 			"$gt": time.Now(),
 		},
 	}
-
-	err := collection.FindOne(ctx, filter).Decode(&url)
+	err := collection.FindOne(ctx, filter).Decode(&url) //
 	if err != nil {
 		log.Println("Error while getting the document :", err)
-		return "", err
+		return "", nil
 	}
 	return url.OriginalURL, nil
 }
