@@ -4,8 +4,8 @@ package models
 // 1. Connect to MongoDB and create a new client.	--> Done.
 // 2. Create a new database and a collection to store the details of url.	--> Done.
 // 3. Make func to add a document in collection.	--> Done.
-// 4. Make func to get a document from collection.
-// 5. Make func to delete a document from collection.
+// 4. Make func to get a document from collection.	--> Done.
+// 5. Make func to delete a document from collection.	--> Done.
 
 import (
 	"context"
@@ -47,13 +47,13 @@ func init() {
 	if err != nil {
 		log.Fatal("Error while Ping to mongoDB : ", err)
 	}
-	fmt.Println("err : ", err)
 	url := &URL{
-		OriginalURL: "https://github.com/",
+		OriginalURL: "https://github.com/farzamalam",
 		UserID:      1,
 	}
 	url.InsertURL()
 	_, _ = url.GetURL()
+	//_ = url.DeleteURL()
 }
 
 // InsertURL is used to insert a new url into the collection.
@@ -69,6 +69,19 @@ func (url *URL) InsertURL() error {
 		return err
 	}
 	fmt.Println("id : ", res.InsertedID)
+	return nil
+}
+func (url *URL) DeleteURL() error {
+	log.Println("Inside DeleteURL()")
+	collection := GetMongoClient().Database("shorturl").Collection("url")
+	filter := bson.M{
+		"_id": url.ShortURL,
+	}
+	_, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Println("Error while DeleteURL : ", err)
+		return err
+	}
 	return nil
 }
 
