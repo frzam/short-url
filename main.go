@@ -27,5 +27,5 @@ func main() {
 	r.HandleFunc("/", handlers.IndexHandler)
 	// Starting Server.
 	log.Println("Starting Server at : ", port)
-	log.Fatal(http.ListenAndServe(":"+port, r))
+	//	log.Fatal(http.ListenAndServe(":"+port, r))
 }

@@ -2,8 +2,8 @@ package models
 
 // TO DO :
 // 1. Connect to MongoDB and create a new client.	--> Done.
-// 2. Create a new database and a collection to store the details of url.
-// 3. Make func to add a document in collection.
+// 2. Create a new database and a collection to store the details of url.	--> Done.
+// 3. Make func to add a document in collection.	--> Done.
 // 4. Make func to get a document from collection.
 // 5. Make func to delete a document from collection.
 
@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -24,11 +25,11 @@ var client *mongo.Client
 var ctx = context.Background()
 
 type URL struct {
-	ShortURL       string `json:"short_url"`
-	OriginalURL    string `json:"original_url"`
-	CreationDate   string `json:"creation_date"`
-	ExpirationDate string `json:"expiration_date"`
-	UserID         int    `json:"user_id"`
+	ShortURL       string    `json:"short_url"`
+	OriginalURL    string    `json:"original_url"`
+	CreationDate   time.Time `json:"creation_date"`
+	ExpirationDate time.Time `json:"expiration_date"`
+	UserID         int       `json:"user_id"`
 }
 
 func init() {
@@ -48,25 +49,53 @@ func init() {
 	}
 	fmt.Println("err : ", err)
 	url := &URL{
-		OriginalURL: "https://github.com/mongodb/mongo-go-driver#usage",
+		OriginalURL: "https://github.com/",
 		UserID:      1,
 	}
-	url.InsertIntoDB()
+	url.InsertURL()
+	_, _ = url.GetURL()
 }
 
-func (url *URL) InsertIntoDB() {
-	shortURL := generateHash(url.OriginalURL)
-	url.ShortURL = shortURL
-	url.CreationDate = time.Now().Format(time.RFC850)
-	if url.ExpirationDate == "" {
-		url.ExpirationDate = time.Now().AddDate(0, 1, 0).Format(time.RFC850)
-	}
+// InsertURL is used to insert a new url into the collection.
+// It calls the prepareURL method that is used to generate the url, currentDate
+// expiry date. Then InsertURL() inserts the document with _id = shortURL.
+// It returns the error.
+func (url *URL) InsertURL() error {
+	url.prepareURL()
 	collection := GetMongoClient().Database("shorturl").Collection("url")
-	res, err := collection.InsertOne(ctx, url)
+	res, err := collection.InsertOne(ctx, bson.M{"_id": url.ShortURL, "data": url})
 	if err != nil {
-		log.Fatal("Error while inserting into DB : ", err)
+		log.Println("Error while inserting into DB : ", err)
+		return err
 	}
 	fmt.Println("id : ", res.InsertedID)
+	return nil
+}
+
+func (url *URL) prepareURL() {
+	url.ShortURL = generateHash(url.OriginalURL)
+	url.CreationDate = time.Now()
+	url.ExpirationDate = time.Now().AddDate(0, 1, 0)
+}
+
+// GetURL is used to retrive original url basis the short url and current date.
+// If the current date is after or equal to expiry date then we are not returning anything.
+// It returns the original url and error.
+func (url *URL) GetURL() (string, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("url")
+	filter := bson.M{
+		"_id": url.ShortURL,
+		"data.expirationdate": bson.M{
+			"$gt": time.Now(),
+		},
+	}
+
+	err := collection.FindOne(ctx, filter).Decode(&url)
+	if err != nil {
+		log.Println("Error while getting the document :", err)
+		return "", err
+	}
+	return url.OriginalURL, nil
 }
 
 // GetMongoClient  gives the mongoDB client.
