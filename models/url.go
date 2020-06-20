@@ -47,13 +47,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Error while Ping to mongoDB : ", err)
 	}
-	url := &URL{
-		OriginalURL: "https://github.com/farzamalam",
-		UserID:      1,
-	}
-	url.InsertURL()
-	_, _ = url.GetURL()
-	//_ = url.DeleteURL()
+
 }
 
 // InsertURL is used to insert a new url into the collection.
