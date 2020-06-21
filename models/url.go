@@ -49,12 +49,12 @@ func init() {
 	}
 	ipInfo, _ := GetIPInfo("43.239.115.230")
 	cd := &ClickDetails{
-		IPInfo:      ipInfo,
-		CurrentTime: time.Now(),
-		ShortURL:    "s-url",
+		IPInfo:   ipInfo,
+		ShortURL: "s-url",
 	}
 	_ = cd.InsertClickDetails()
 	_, _ = cd.GetClickDetails()
+	_ = cd.DeteteClickDetails()
 }
 
 // InsertURL is used to insert a new url into the collection.

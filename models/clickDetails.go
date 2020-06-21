@@ -68,7 +68,7 @@ func GetIPInfo(ip string) (IPInfo, error) {
 func (cd *ClickDetails) InsertClickDetails() error {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	data := bson.M{
-		"ipinfo":       cd.IPInfo,
+		"ip_info":      cd.IPInfo,
 		"short_url":    cd.ShortURL,
 		"original_url": cd.OriginalURL,
 		"current_time": time.Now(),
@@ -82,17 +82,17 @@ func (cd *ClickDetails) InsertClickDetails() error {
 	return nil
 }
 
-func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
+func (cd *ClickDetails) GetClickDetails() (string, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_data")
 	filter := bson.M{"short_url": cd.ShortURL}
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
 		log.Println("Error while GetClickDetails() : ", err)
-		return nil, err
+		return "", err
 	}
-	var clickDetails []*ClickDetails
+	var clickDetails ClickDetails
 	i := 0
-	fmt.Println("res : ", res)
+	fmt.Println("res : ", res.Decode(&clickDetails))
 	for res.Next(ctx) {
 		i++
 		log.Println("times : ", i)
@@ -101,8 +101,22 @@ func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
 		if err != nil {
 			log.Println("Error in Decode of GetClickDetails() : ", err)
 		}
-		clickDetails = append(clickDetails, &c)
+		//clickDetails = append(clickDetails, c)
 	}
 	log.Println("clickDetails")
-	return clickDetails, nil
+	return "clickDetails", nil
+}
+
+func (cd *ClickDetails) DeteteClickDetails() error {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := bson.M{
+		"short_url": cd.ShortURL,
+	}
+	_, err := collection.DeleteMany(ctx, filter)
+	if err != nil {
+		log.Println("Error in Delete of DeleteClickDetails : ", err)
+		return err
+	}
+	log.Println("Deleted Properly ", cd.ShortURL)
+	return nil
 }
