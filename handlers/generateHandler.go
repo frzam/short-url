@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"os"
 	"short-url/models"
 )
 
@@ -12,6 +13,7 @@ func GenerateHandler(w http.ResponseWriter, r *http.Request) {
 		IndexHandler(w, r)
 		return
 	}
+	host := os.Getenv("host")
 	url := &models.URL{
 		OriginalURL: originalURL,
 		UserID:      1,
@@ -21,5 +23,6 @@ func GenerateHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error while Calling InsertURL() : ", err)
 		return
 	}
+	url.ShortURL = host + url.ShortURL
 	tpl.Execute(w, url)
 }

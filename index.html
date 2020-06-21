@@ -17,12 +17,14 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Dosis:300,400,500,,600,700,700i|Lato:300,300i,400,400i,700,700i" rel="stylesheet">
 
   <!-- CSS Files -->
+  <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
   <link href="assets/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/css/icofont/icofont.min.css" rel="stylesheet">
   <link href="assets/css/boxicons/css/boxicons.min.css" rel="stylesheet">
   <link href="assets/css/venobox/venobox.css" rel="stylesheet">
   <link href="assets/css/line-awesome/css/line-awesome.min.css" rel="stylesheet">
   <link href="assets/css/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
   <!-- Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
@@ -49,68 +51,48 @@
   </header>
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="d-flex align-items-center">
-
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6">
-          <h4>Join Our Newsletter</h4>
-          <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
-          <form action="/generate" method="post">
-            <input type="text" name="url" value="{{.OriginalURL}}"><input type="submit" value="Generate">
-          </form>
-        </div>
-        <div class="col-lg-6 order-1 order-lg-2 hero-img">
+     <div class="container"> 
+      <div class="form-row">
+        <div class="form-group col-lg-6  hero-img" id="hero-img" >
           <img src="assets/img/hero-img.png" class="img-fluid" alt="">
         </div>
-      </div>
-        <div class="row justify-content-center">
-          
-        </div>
-        {{if (ne .ShortURL "")}}
-        <div class="row justify-content-center">
-          <div class="col-lg-6">
-            <h4>Output</h4>
-            <p value = "{{.ShortURL}}">{{.ShortURL}}</p>
+      <div class="form-group col-lg-6">
+          <h3>Build simple and reliable short links. </h3>
+          <p>Short-URL is used to make Six characters URL and it can be retrived at lightning speed.<strong>Try it out.</strong></p>
+          <form action="/generate" method="post">
+            <div class="form-row">
+                <div class="form-group col-md-10">
+                    <input  type="text" class="form-control" name="url" value="{{.OriginalURL}}" placeholder="Original URL">
+                </div>
+                <div class="form-group col-md-2">
+                  <input type="submit" class="btn btn-primary" value="Generate">
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                 <input  class="form-control"  type="text" value="{{.ShortURL}}" placeholder="Custom URL">
+              </div>
+              
+            </div>
+          </form>
           </div>
+        
         </div>
-        {{end}}
-      </div>
-    </div>
+       </div>
 
   </section><!-- End Hero -->
-
-  <main id="main">
-
-
   <!-- ======= Footer ======= -->
   <footer id="footer">
-
-
-
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Social Networks</h4>
-            <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
-            <div class="social-links mt-3">
-              <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="container py-4">
       <div class="copyright">
-        &copy; Designed by <strong><span>Farzam Alam</span></strong>. 
+        Designed with <span style="color: #e25555;">&#9829; </span> by <strong>Farzam Alam</strong>
       </div>
-    </div>
+
+      <div class="credits">
+        <a href= "https://github.com/FarzamAlam/short-url"><img style="padding-right:15px" src="https://img.icons8.com/ios-glyphs/30/000000/github.png"/></a>
+
+        <a href= "https://www.linkedin.com/in/farzamalam/" style="padding-right: 10px;">  <span class="iconify" data-icon="fa-linkedin" data-inline="false"></span>  </a> 
+          </div>
   </footer><!-- End Footer -->
 
-  <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
 </body>
 </html>

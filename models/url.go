@@ -97,7 +97,6 @@ func (url *URL) prepareURL() {
 // If the current date is after or equal to expiry date then we are not returning anything.
 // It returns the original url and error.
 func (url *URL) GetURL() (string, error) {
-	fmt.Println("Inside GetURL()")
 	collection := GetMongoClient().Database("shorturl").Collection("url")
 	filter := bson.M{
 		"_id": url.ShortURL,
