@@ -47,7 +47,14 @@ func init() {
 	if err != nil {
 		log.Fatal("Error while Ping to mongoDB : ", err)
 	}
-
+	ipInfo, _ := GetIPInfo("43.239.115.230")
+	cd := &ClickDetails{
+		IPInfo:      ipInfo,
+		CurrentTime: time.Now(),
+		ShortURL:    "s-url",
+	}
+	_ = cd.InsertClickDetails()
+	_, _ = cd.GetClickDetails()
 }
 
 // InsertURL is used to insert a new url into the collection.

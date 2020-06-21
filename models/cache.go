@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	redis "github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 )
 
@@ -38,3 +38,7 @@ func (url *URL) SetCacheURL() error {
 func (url *URL) GetCacheURL() (string, error) {
 	return GetRedisClient().Get(ctx, url.ShortURL).Result()
 }
+
+// func GetCacheIPDetails(ip string) (IPInfo, error) {
+// 	return GetRedisClient().Get(ctx, ip).Result()
+// }
