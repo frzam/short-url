@@ -88,10 +88,7 @@ func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
 		return nil, err
 	}
 	var clickDetails []*ClickDetails
-	i := 0
 	for res.Next(ctx) {
-		i++
-		log.Println("times : ", i)
 		var c ClickDetails
 		err = res.Decode(&c)
 		if err != nil {
@@ -99,7 +96,6 @@ func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
 		}
 		clickDetails = append(clickDetails, &c)
 	}
-	log.Println("clickDetails : ", clickDetails)
 	return clickDetails, nil
 }
 

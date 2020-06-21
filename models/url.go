@@ -56,6 +56,7 @@ func init() {
 	_ = cd.InsertClickDetails()
 	_, _ = cd.GetClickDetails()
 	//_ = cd.DeteteClickDetails()
+	_ = cd.SetCacheClickDetails()
 }
 
 // InsertURL is used to insert a new url into the collection.

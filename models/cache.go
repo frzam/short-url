@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -39,6 +40,12 @@ func (url *URL) GetCacheURL() (string, error) {
 	return GetRedisClient().Get(ctx, url.ShortURL).Result()
 }
 
-// func GetCacheIPDetails(ip string) (IPInfo, error) {
-// 	return GetRedisClient().Get(ctx, ip).Result()
-// }
+func (cd *ClickDetails) GetCacheClickDetails() error {
+	return GetRedisClient().Get(ctx, cd.IPInfo.IP).Scan(&cd)
+}
+
+func (cd *ClickDetails) SetCacheClickDetails() error {
+	log.Println("IP : ", cd.IPInfo.IP)
+	log.Println("cd : ", *cd)
+	return GetRedisClient().HMSet(ctx, cd.IPInfo.IP, cd, time.Minute*2).Err()
+}
