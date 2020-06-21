@@ -22,10 +22,20 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	url := &models.URL{
 		ShortURL: shortURL,
 	}
-	originalURL, err := url.GetURL()
-	if err != nil {
-		log.Println("err : ", err)
+	var originalURL string
+	var err error
+	// Calling the Redis to get the cache value
+	originalURL, _ = url.GetCacheURL()
+	// If Not found then only call the MongoDB.
+	if originalURL == "" {
+		originalURL, err = url.GetURL()
+		if err != nil {
+			log.Println("err : ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
+
 	fmt.Println("originalURL : ", originalURL)
 	http.Redirect(w, r, originalURL, http.StatusFound)
 }

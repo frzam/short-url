@@ -24,13 +24,6 @@ func init() {
 	})
 	pong, _ := rdb.Ping(ctx).Result()
 	fmt.Println("Ping - ", pong)
-	url := &URL{
-		ShortURL:    "1e4c36",
-		OriginalURL: "https://github.com/farzamalam",
-	}
-	_ = url.SetCacheURL()
-	u, _ := url.GetCacheURL()
-	fmt.Println("u : ", u)
 }
 
 func GetRedisClient() *redis.Client {
@@ -38,7 +31,8 @@ func GetRedisClient() *redis.Client {
 }
 
 func (url *URL) SetCacheURL() error {
-	return GetRedisClient().Set(ctx, url.ShortURL, url.OriginalURL, time.Hour*2).Err()
+	fmt.Println("SetCacheURL() Called !")
+	return GetRedisClient().Set(ctx, url.ShortURL, url.OriginalURL, time.Second*20).Err()
 }
 
 func (url *URL) GetCacheURL() (string, error) {

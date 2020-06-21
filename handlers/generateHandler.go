@@ -23,6 +23,11 @@ func GenerateHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error while Calling InsertURL() : ", err)
 		return
 	}
+	err = url.SetCacheURL()
+	if err != nil {
+		log.Println("Error while Calling SetCacheURL() : ", err)
+		return
+	}
 	url.ShortURL = host + url.ShortURL
 	tpl.Execute(w, url)
 }
