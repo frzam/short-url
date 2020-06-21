@@ -32,7 +32,7 @@ func GetRedisClient() *redis.Client {
 
 func (url *URL) SetCacheURL() error {
 	fmt.Println("SetCacheURL() Called !")
-	return GetRedisClient().Set(ctx, url.ShortURL, url.OriginalURL, time.Second*20).Err()
+	return GetRedisClient().Set(ctx, url.ShortURL, url.OriginalURL, time.Hour*2).Err()
 }
 
 func (url *URL) GetCacheURL() (string, error) {

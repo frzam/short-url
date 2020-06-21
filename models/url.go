@@ -35,7 +35,7 @@ type URL struct {
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error while loading the .env file")
+		log.Println("Error while loading the .env file")
 	}
 	name := os.Getenv("primaryDB_name")
 	host := os.Getenv("primaryDB_host")
