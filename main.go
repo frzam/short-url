@@ -18,7 +18,7 @@ func main() {
 	}
 	// Create a new router instance
 	r := mux.NewRouter()
-
+	r.Use(handlers.LoggingMiddleware)
 	// Creating a file server object.
 	fs := http.FileServer(http.Dir("assets"))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
