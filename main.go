@@ -27,6 +27,10 @@ func main() {
 	r.HandleFunc("/generate", handlers.GenerateHandler)
 	// Serving IndexHandler
 	r.HandleFunc("/", handlers.IndexHandler)
+
+	// API:
+	r.HandleFunc("/api/v1/{shorturl}", handlers.GetClickDetailsHandler).Methods(http.MethodGet)
+	//r.HandleFunc("/{shorturl}", handlers.DeleteClickDetails).Methods(http.MethodDelete)
 	// Get the original url from shorturl
 	r.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 	// Starting Server.
