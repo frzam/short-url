@@ -102,7 +102,7 @@ func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
 	return clickDetails, nil
 }
 
-func (cd *ClickDetails) DeteteClickDetails() error {
+func (cd *ClickDetails) DeleteClickDetails() error {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
 		"shorturl": cd.ShortURL,
