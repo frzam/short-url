@@ -49,7 +49,7 @@ type Location struct {
 	IsEu                    bool        `json:"is_eu"`
 }
 
-func GetIPInfo(ip string) (IPInfo, error) {
+func GetIPInfo(ip string) IPInfo {
 	apiKey := os.Getenv("ipstack_apiKey")
 	if apiKey == "" {
 		log.Println("apiKey is empty")
@@ -62,7 +62,10 @@ func GetIPInfo(ip string) (IPInfo, error) {
 	defer resp.Body.Close()
 	var ipInfo IPInfo
 	err = json.NewDecoder(resp.Body).Decode(&ipInfo)
-	return ipInfo, err
+	if err != nil {
+		log.Println("Error while GetIPInfo Decode : ", err)
+	}
+	return ipInfo
 }
 
 func (cd *ClickDetails) InsertClickDetails() error {

@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -45,7 +44,5 @@ func (cd *ClickDetails) GetCacheClickDetails() error {
 }
 
 func (cd *ClickDetails) SetCacheClickDetails() error {
-	log.Println("IP : ", cd.IPInfo.IP)
-	log.Println("cd : ", *cd)
-	return GetRedisClient().HMSet(ctx, cd.IPInfo.IP, cd, time.Minute*2).Err()
+	return GetRedisClient().Set(ctx, cd.IPInfo.IP, []byte(fmt.Sprintf("%v", cd)), time.Hour*2).Err()
 }

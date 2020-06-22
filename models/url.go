@@ -47,16 +47,19 @@ func init() {
 	if err != nil {
 		log.Fatal("Error while Ping to mongoDB : ", err)
 	}
-	ipInfo, _ := GetIPInfo("43.239.115.230")
-	cd := &ClickDetails{
-		IPInfo:      ipInfo,
-		ShortURL:    "s-url",
-		CurrentTime: time.Now(),
-	}
-	_ = cd.InsertClickDetails()
-	_, _ = cd.GetClickDetails()
-	//_ = cd.DeteteClickDetails()
-	_ = cd.SetCacheClickDetails()
+
+	// 	ipInfo, _ := GetIPInfo("43.239.115.230")
+	// 	cd := &ClickDetails{
+	// 		IPInfo:      ipInfo,
+	// 		ShortURL:    "s-url",
+	// 		CurrentTime: time.Now(),
+	// 	}
+	// 	_ = cd.InsertClickDetails()
+	// 	_, _ = cd.GetClickDetails()
+	// 	//_ = cd.DeteteClickDetails()
+	// 	_ = cd.SetCacheClickDetails()
+	// 	_ = cd.GetCacheClickDetails()
+	// 	fmt.Println("cd : ", cd.IPInfo)
 }
 
 // InsertURL is used to insert a new url into the collection.
@@ -121,6 +124,27 @@ func (url *URL) GetURL() (string, error) {
 	}
 	_ = url.SetCacheURL()
 	return url.OriginalURL, nil
+}
+
+func (url *URL) AddClickDetails(ip string) error {
+	// TO DO : think about calling the Cache for same ip.
+	cd := &ClickDetails{
+		OriginalURL: url.OriginalURL,
+		ShortURL:    url.ShortURL,
+		CurrentTime: time.Now(),
+		IPInfo:      GetIPInfo(ip),
+	}
+	err := cd.InsertClickDetails()
+	if err != nil {
+		log.Println("Error while Calling InsertClickDetails() : ", err)
+		return err
+	}
+	// If in cache don't again insert in cache. Otherwise
+	err = cd.SetCacheClickDetails()
+	if err != nil {
+		log.Println("Error while Calling SetCacheClickDetails() ")
+	}
+	return err
 }
 
 // GetMongoClient  gives the mongoDB client.
