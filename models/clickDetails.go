@@ -115,3 +115,34 @@ func (cd *ClickDetails) DeleteClickDetails() error {
 	log.Println("Deleted Properly ", cd.ShortURL)
 	return nil
 }
+
+func (cd *ClickDetails) GetTotalClicksCount() (int, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := bson.M{
+		"shorturl": cd.ShortURL,
+	}
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		log.Println("Error in GetTotalCount : ", err)
+		return -1, err
+	}
+	fmt.Println("Count : ", count)
+	return int(count), nil
+}
+
+func (cd *ClickDetails) GetNdayClicksCount(days int) (int, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := bson.M{
+		"shorturl": cd.ShortURL,
+		"currenttime": bson.M{
+			"$gt": time.Now().AddDate(0, 0, -1*days),
+		},
+	}
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		log.Println("Error in GetTodayClicksCount : ", err)
+		return -1, err
+	}
+	fmt.Println("Today Count : ", count)
+	return int(count), nil
+}
