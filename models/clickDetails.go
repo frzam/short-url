@@ -168,3 +168,32 @@ func (cd *ClickDetails) GetNdayClicksCount(days int) (int, error) {
 	fmt.Println("Today Count : ", count)
 	return int(count), nil
 }
+
+func (cd *ClickDetails) GetClicksDetailsByCountry(country string, skip, limit int64) ([]*ClickDetails, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := &bson.M{
+		"shorturl":           cd.ShortURL,
+		"ipinfo.countryname": country,
+	}
+	opts := &options.FindOptions{
+		Skip:  &skip,
+		Limit: &limit,
+	}
+	res, err := collection.Find(ctx, filter, opts)
+	if err != nil {
+		log.Println("Error in GetClicksDetailsByCountry : ", err)
+		return nil, err
+	}
+	var clickDetails []*ClickDetails
+	for res.Next(ctx) {
+		var cd ClickDetails
+		err = res.Decode(&cd)
+		if err != nil {
+			log.Println("Error while Decode in GetClicksDetailsByCountry : ", err)
+		} else {
+			clickDetails = append(clickDetails, &cd)
+		}
+	}
+	fmt.Println("clickDetalis : ", clickDetails)
+	return clickDetails, err
+}

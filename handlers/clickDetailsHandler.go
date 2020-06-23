@@ -14,7 +14,7 @@ func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	cd := &models.ClickDetails{
 		ShortURL: shortURL,
 	}
-	res, err := cd.GetTotalClicksDetails()
+	res, err := cd.GetTotalClicksDetails(0, 0)
 	if err != nil {
 		log.Println("Error while calling GetClickDetails() : ", err)
 		return
