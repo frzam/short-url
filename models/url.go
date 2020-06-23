@@ -59,7 +59,7 @@ func init() {
 		CurrentTime: time.Now(),
 	}
 	//_ = cd.InsertClickDetails()
-	_, _ = cd.GetClickDetails(1)
+	_, _ = cd.GetNdayClicksDetails(2, 20, 10)
 
 	_, _ = cd.GetTotalClicksCount()
 	_, _ = cd.GetNdayClicksCount(2)

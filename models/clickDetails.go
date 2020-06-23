@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ClickDetails struct {
@@ -80,24 +81,29 @@ func (cd *ClickDetails) InsertClickDetails() error {
 	return nil
 }
 
-func (cd *ClickDetails) GetTotalClicksDetails() ([]*ClickDetails, error) {
-	return cd.GetNdayClicksDetails(0)
+func (cd *ClickDetails) GetTotalClicksDetails(skip, limit int64) ([]*ClickDetails, error) {
+	return cd.GetNdayClicksDetails(0, skip, limit)
 }
 
-func (cd *ClickDetails) GetNdayClicksDetails(days int) ([]*ClickDetails, error) {
+func (cd *ClickDetails) GetNdayClicksDetails(days int, skip, limit int64) ([]*ClickDetails, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	var from time.Time
 	if days != 0 {
 		from = time.Now().AddDate(0, 0, -1*days)
 	}
 	fmt.Println("from : ", from)
+
+	opts := &options.FindOptions{
+		Skip:  &skip,
+		Limit: &limit,
+	}
 	filter := bson.M{
 		"shorturl": cd.ShortURL,
 		"currenttime": bson.M{
 			"$gt": from,
 		},
 	}
-	res, err := collection.Find(ctx, filter)
+	res, err := collection.Find(ctx, filter, opts)
 	if err != nil {
 		log.Println("Error while GetClickDetails() : ", err)
 		return nil, err
@@ -135,6 +141,7 @@ func (cd *ClickDetails) GetTotalClicksCount() (int, error) {
 	filter := bson.M{
 		"shorturl": cd.ShortURL,
 	}
+
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
 		log.Println("Error in GetTotalCount : ", err)
