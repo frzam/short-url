@@ -80,10 +80,22 @@ func (cd *ClickDetails) InsertClickDetails() error {
 	return nil
 }
 
-func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
+func (cd *ClickDetails) GetTotalClicksDetails() ([]*ClickDetails, error) {
+	return cd.GetNdayClicksDetails(0)
+}
+
+func (cd *ClickDetails) GetNdayClicksDetails(days int) ([]*ClickDetails, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	var from time.Time
+	if days != 0 {
+		from = time.Now().AddDate(0, 0, -1*days)
+	}
+	fmt.Println("from : ", from)
 	filter := bson.M{
 		"shorturl": cd.ShortURL,
+		"currenttime": bson.M{
+			"$gt": from,
+		},
 	}
 	res, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -99,6 +111,7 @@ func (cd *ClickDetails) GetClickDetails() ([]*ClickDetails, error) {
 		}
 		clickDetails = append(clickDetails, &c)
 	}
+	fmt.Println(clickDetails)
 	return clickDetails, nil
 }
 
@@ -116,6 +129,7 @@ func (cd *ClickDetails) DeleteClickDetails() error {
 	return nil
 }
 
+// GetTotalClicksCount will return the total clicks count for a particular url.
 func (cd *ClickDetails) GetTotalClicksCount() (int, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
@@ -130,6 +144,7 @@ func (cd *ClickDetails) GetTotalClicksCount() (int, error) {
 	return int(count), nil
 }
 
+// GetNdayClicksCount will return the click counts for past n days.
 func (cd *ClickDetails) GetNdayClicksCount(days int) (int, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
