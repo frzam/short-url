@@ -77,7 +77,7 @@ func (cd *ClickDetails) InsertClickDetails() error {
 		log.Println("Error while InsertClickDetails() : ", err)
 		return err
 	}
-	fmt.Println("Id : ", res.InsertedID)
+	log.Println("ID : ", res.InsertedID)
 	return nil
 }
 
@@ -91,7 +91,6 @@ func (cd *ClickDetails) GetNdayClicksDetails(days int, skip, limit int64) ([]*Cl
 	if days != 0 {
 		from = time.Now().AddDate(0, 0, -1*days)
 	}
-	fmt.Println("from : ", from)
 
 	opts := &options.FindOptions{
 		Skip:  &skip,
@@ -117,7 +116,6 @@ func (cd *ClickDetails) GetNdayClicksDetails(days int, skip, limit int64) ([]*Cl
 		}
 		clickDetails = append(clickDetails, &c)
 	}
-	fmt.Println(clickDetails)
 	return clickDetails, nil
 }
 
@@ -147,7 +145,6 @@ func (cd *ClickDetails) GetTotalClicksCount() (int, error) {
 		log.Println("Error in GetTotalCount : ", err)
 		return -1, err
 	}
-	fmt.Println("Count : ", count)
 	return int(count), nil
 }
 
@@ -165,7 +162,6 @@ func (cd *ClickDetails) GetNdayClicksCount(days int) (int, error) {
 		log.Println("Error in GetTodayClicksCount : ", err)
 		return -1, err
 	}
-	fmt.Println("Today Count : ", count)
 	return int(count), nil
 }
 
@@ -194,7 +190,6 @@ func (cd *ClickDetails) GetClicksDetailsByCountry(country string, skip, limit in
 			clickDetails = append(clickDetails, &cd)
 		}
 	}
-	fmt.Println("clickDetalis : ", clickDetails)
 	return clickDetails, err
 }
 
@@ -223,7 +218,6 @@ func (cd *ClickDetails) GetClicksDetailsByCity(city string, skip, limit int64) (
 			clickDetails = append(clickDetails, cd)
 		}
 	}
-	fmt.Println("clickDetailsByCity : ", clickDetails)
 	return clickDetails, nil
 }
 
@@ -238,6 +232,33 @@ func (cd *ClickDetails) GetClicksCountByIP(ip string) (int, error) {
 		log.Println("Error in GetClicksCountByIP : ", err)
 		return -1, err
 	}
-	fmt.Println("count : ", count)
 	return int(count), nil
+}
+
+func (cd *ClickDetails) GetClicksDetailsByIP(ip string, skip, limit int64) ([]*ClickDetails, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := bson.M{
+		"shorturl":  cd.ShortURL,
+		"ipinfo.ip": ip,
+	}
+	opts := &options.FindOptions{
+		Skip:  &skip,
+		Limit: &limit,
+	}
+	res, err := collection.Find(ctx, filter, opts)
+	if err != nil {
+		log.Println("Error in GetClicksDetailsByIP : ", err)
+		return nil, err
+	}
+	var clickDetails []*ClickDetails
+	for res.Next(ctx) {
+		var cd *ClickDetails
+		err := res.Decode(&cd)
+		if err != nil {
+			log.Println("Error while Decode of GetClicksDetailsByIP : ", err)
+		} else {
+			clickDetails = append(clickDetails, cd)
+		}
+	}
+	return clickDetails, nil
 }

@@ -54,18 +54,19 @@ func init() {
 	// 	_ = cd.GetCacheClickDetails()
 	// 	fmt.Println("cd : ", cd.IPInfo)
 
-	cd := &ClickDetails{
-		ShortURL:    "s-url",
-		CurrentTime: time.Now(),
-	}
-	//_ = cd.InsertClickDetails()
-	_, _ = cd.GetNdayClicksDetails(2, 20, 10)
+	// cd := &ClickDetails{
+	// 	ShortURL:    "s-url",
+	// 	CurrentTime: time.Now(),
+	// }
+	// //_ = cd.InsertClickDetails()
+	// _, _ = cd.GetNdayClicksDetails(2, 20, 10)
 
-	_, _ = cd.GetTotalClicksCount()
-	_, _ = cd.GetNdayClicksCount(2)
-	_, _ = cd.GetClicksDetailsByCountry("China", 0, 10)
-	_, _ = cd.GetClicksDetailsByCity("Powai", 0, 10)
-	_, _ = cd.GetClicksCountByIP("43.239.115.230")
+	// _, _ = cd.GetTotalClicksCount()
+	// _, _ = cd.GetNdayClicksCount(2)
+	// _, _ = cd.GetClicksDetailsByCountry("China", 0, 10)
+	// _, _ = cd.GetClicksDetailsByCity("Powai", 0, 10)
+	// _, _ = cd.GetClicksCountByIP("43.239.115.230")
+	// _, _ = cd.GetClicksDetailsByIP("43.239.115.230", 0, 10)
 }
 
 // InsertURL is used to insert a new url into the collection.
