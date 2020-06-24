@@ -197,3 +197,32 @@ func (cd *ClickDetails) GetClicksDetailsByCountry(country string, skip, limit in
 	fmt.Println("clickDetalis : ", clickDetails)
 	return clickDetails, err
 }
+
+func (cd *ClickDetails) GetClicksDetailsByCity(city string, skip, limit int64) ([]*ClickDetails, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := bson.M{
+		"shorturl":    cd.ShortURL,
+		"ipinfo.city": city,
+	}
+	opts := &options.FindOptions{
+		Skip:  &skip,
+		Limit: &limit,
+	}
+	res, err := collection.Find(ctx, filter, opts)
+	if err != nil {
+		log.Println("Error in GetClicksDetailsByCity() : ", err)
+		return nil, err
+	}
+	var clickDetails []*ClickDetails
+	for res.Next(ctx) {
+		var cd *ClickDetails
+		err := res.Decode(&cd)
+		if err != nil {
+			log.Println("Error while Decoding in GetClicksDetailsBydCity() : ", err)
+		} else {
+			clickDetails = append(clickDetails, cd)
+		}
+	}
+	fmt.Println("clickDetailsByCity : ", clickDetails)
+	return clickDetails, nil
+}
