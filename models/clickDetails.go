@@ -226,3 +226,18 @@ func (cd *ClickDetails) GetClicksDetailsByCity(city string, skip, limit int64) (
 	fmt.Println("clickDetailsByCity : ", clickDetails)
 	return clickDetails, nil
 }
+
+func (cd *ClickDetails) GetClicksCountByIP(ip string) (int, error) {
+	collection := GetMongoClient().Database("shorturl").Collection("click_details")
+	filter := bson.M{
+		"shorturl":  cd.ShortURL,
+		"ipinfo.ip": ip,
+	}
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		log.Println("Error in GetClicksCountByIP : ", err)
+		return -1, err
+	}
+	fmt.Println("count : ", count)
+	return int(count), nil
+}

@@ -65,6 +65,7 @@ func init() {
 	_, _ = cd.GetNdayClicksCount(2)
 	_, _ = cd.GetClicksDetailsByCountry("China", 0, 10)
 	_, _ = cd.GetClicksDetailsByCity("Powai", 0, 10)
+	_, _ = cd.GetClicksCountByIP("43.239.115.230")
 }
 
 // InsertURL is used to insert a new url into the collection.
