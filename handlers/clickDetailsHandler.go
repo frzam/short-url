@@ -70,6 +70,31 @@ func TotalCountHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// Path : Get /api/v1/{shorturl}/totalcount/{days}
+func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
+	shorturl := mux.Vars(r)["shorturl"]
+	days := mux.Vars(r)["days"]
+	if shorturl == "" || days == "" {
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Query params"))
+	}
+	d, err := strconv.Atoi(days)
+	if err != nil {
+		log.Println("Error in TotalCountNdaysHandler : ", err)
+		d = 1
+	}
+	cd := &models.ClickDetails{
+		ShortURL: shorturl,
+	}
+	count, err := cd.GetNdayClicksCount(d)
+	if err != nil {
+		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error."))
+		return
+	}
+	resp := utils.Message(true, "Success")
+	resp["count"] = count
+	utils.Respond(w, http.StatusOK, resp)
+}
+
 func getSkipAndLimit(r *http.Request) (int64, int64) {
 	skip := r.URL.Query().Get("skip")
 	s, err := strconv.Atoi(skip)

@@ -32,6 +32,7 @@ func main() {
 	r.HandleFunc("/api/v1/{shorturl}", handlers.GetClickDetailsHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/v1/{shorturl}", handlers.DeleteClickDetailsHandler).Methods(http.MethodDelete)
 	r.HandleFunc("/api/v1/{shorturl}/totalcount", handlers.TotalCountHandler).Methods(http.MethodGet)
+	r.HandleFunc("/api/v1/{shorturl}/totalcount/{days}", handlers.TotalCountNdaysHandler).Methods(http.MethodGet)
 	// Get the original url from shorturl
 	r.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 	// Starting Server.
