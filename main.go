@@ -30,6 +30,7 @@ func main() {
 
 	// API:
 	r.HandleFunc("/api/v1/{shorturl}", handlers.GetClickDetailsHandler).Methods(http.MethodGet)
+	r.HandleFunc("/api/v1/{shorturl}/{days}", handlers.TotalDetailsNdaysHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/v1/{shorturl}", handlers.DeleteClickDetailsHandler).Methods(http.MethodDelete)
 	r.HandleFunc("/api/v1/{shorturl}/totalcount", handlers.TotalCountHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/v1/{shorturl}/totalcount/{days}", handlers.TotalCountNdaysHandler).Methods(http.MethodGet)

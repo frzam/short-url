@@ -95,22 +95,46 @@ func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
+	shorturl := mux.Vars(r)["shorturl"]
+	days := mux.Vars(r)["days"]
+	if days == "" || shorturl == "" {
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Query params."))
+		return
+	}
+	skip, limit := getSkipAndLimit(r)
+	cd := &models.ClickDetails{
+		ShortURL: shorturl,
+	}
+	d, err := strconv.Atoi(days)
+	if err != nil {
+		log.Println("Error in TotalDetailsNdaysHandler : ", err)
+		d = 1
+	}
+	data, err := cd.GetNdayClicksDetails(d, skip, limit)
+	if err != nil {
+		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		return
+	}
+	resp := utils.Message(true, "Success")
+	resp["data"] = data
+	utils.Respond(w, http.StatusOK, resp)
+
+}
+
 func getSkipAndLimit(r *http.Request) (int64, int64) {
 	skip := r.URL.Query().Get("skip")
 	s, err := strconv.Atoi(skip)
 	if err != nil {
-		log.Println("Error in getSkipAndLimit skip : ", skip)
 		s = 0
 	}
 	limit := r.URL.Query().Get("limit")
 	l, err := strconv.Atoi(limit)
 	if err != nil {
-		log.Println("Error in getSkipAndLimit limit : ", limit)
 		l = 100
 	}
 	if l > 100 {
 		l = 100
 	}
-
 	return int64(s), int64(l)
 }
