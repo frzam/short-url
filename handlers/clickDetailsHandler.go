@@ -168,6 +168,50 @@ func TotalDetailsByCityHandler(w http.ResponseWriter, r *http.Request) {
 	resp["data"] = data
 	utils.Respond(w, http.StatusOK, resp)
 }
+
+// Path : GET /api/v1/{shorturl}/ip/{ip}
+func TotalDetailsByIP(w http.ResponseWriter, r *http.Request) {
+	shorturl := mux.Vars(r)["shorturl"]
+	ip := mux.Vars(r)["ip"]
+	if shorturl == "" || ip == "" {
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params"))
+		return
+	}
+	skip, limit := getSkipAndLimit(r)
+	cd := &models.ClickDetails{
+		ShortURL: shorturl,
+	}
+	data, err := cd.GetClicksDetailsByIP(ip, skip, limit)
+	if err != nil {
+		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		return
+	}
+	resp := utils.Message(true, "Sucess")
+	resp["data"] = data
+	utils.Respond(w, http.StatusOK, resp)
+}
+
+// Path : GET /api/v1/{shorturl}/ip/{ip}/totalcount
+func ClickCountsByIP(w http.ResponseWriter, r *http.Request) {
+	shorturl := mux.Vars(r)["shorturl"]
+	ip := mux.Vars(r)["ip"]
+	if shorturl == "" || ip == "" {
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path Param"))
+		return
+	}
+	cd := &models.ClickDetails{
+		ShortURL: shorturl,
+	}
+	count, err := cd.GetClicksCountByIP(ip)
+	if err != nil {
+		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error."))
+		return
+	}
+	resp := utils.Message(true, "Success")
+	resp["total_count"] = count
+	utils.Respond(w, http.StatusOK, resp)
+}
+
 func getSkipAndLimit(r *http.Request) (int64, int64) {
 	skip := r.URL.Query().Get("skip")
 	s, err := strconv.Atoi(skip)
