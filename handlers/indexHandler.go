@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"short-url/models"
+	"strings"
 )
 
 // Creating a template instance so that we can execute our data into it.
@@ -55,5 +56,9 @@ func getIPAddress(r *http.Request) string {
 	if ip == "" {
 		ip = r.RemoteAddr
 	}
+	if strings.Contains(ip, ":") {
+		ip = ip[:strings.Index(ip, ":")]
+	}
+
 	return ip
 }
