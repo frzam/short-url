@@ -135,8 +135,9 @@ func (url *URL) GetURL() (string, error) {
 
 func (url *URL) AddClickDetails(ip string) error {
 	// TO DO : think about calling the Cache for same ip.
+	originalURL, _ := url.GetCacheURL()
 	cd := &ClickDetails{
-		OriginalURL: url.OriginalURL,
+		OriginalURL: originalURL,
 		ShortURL:    url.ShortURL,
 		CurrentTime: time.Now(),
 		IPInfo:      GetIPInfo(ip),
