@@ -1381,12 +1381,7 @@ section {
 #footer {
   padding-left: 10%;
   padding-right: 10%;
-  padding-top: 15px;
-  padding-bottom: 5px;
   font-size: 14px;
-  height: 10%;
-  position: relative; 
-  bottom: 0;
 }
 
 #footer .copyright {

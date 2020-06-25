@@ -62,12 +62,12 @@
 
        <!--<a href="index.html" class="logo mr-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a> -->
       <!-- Uncomment below if you prefer to use text as a logo -->
-      <h1 class="logo mr-auto"><a href="/">Short-Url</a></h1>
+      <h1 class="logo mr-auto"><a href="/">Shrt-Url</a></h1>
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
           <li class="active"><a href="/">Home</a></li>
-          <li><a href="#about">API Docs</a></li>
+          <li><a href="#api-docs">API Docs</a></li>
           <li><a href="#footer">Contact</a></li>
         </ul>
       </nav>
@@ -95,7 +95,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-md-6">
-                 <input  class="form-control"  type="text" value="{{.ShortURL}}" placeholder="Custom URL">
+                 <input  class="form-control"  type="text" value="{{.ShortURL}}" placeholder="Short URL">
               </div>
               
             </div>
@@ -106,19 +106,22 @@
 
   </section><!-- End Hero -->
   <!--Start Documentation-->
+  <div id ="api-docs" style="margin-top:10%;margin-left:8%;margin-right:8%; border: 1px solid; padding: 10px; box-shadow: 5px 10px #888888;">
     <div id="swagger-ui"></div>
-
+  </div>
     <script src="./assets/docs/swagger-ui-bundle.js"> </script>
     <script src="./assets/docs/swagger-ui-standalone-preset.js"> </script>
     <script>
     window.onload = function() {
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        url: "https://api.swaggerhub.com/apis/per7/SimpleAPI2/1.0.0/swagger.json",
+        url: "https://api.swaggerhub.com/apis/per7/short-url/1.0.1/swagger.json",
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
           SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+
         ],
         plugins: [
           SwaggerUIBundle.plugins.DownloadUrl
@@ -134,6 +137,7 @@
   <!--End Documentation-->
   <!-- ======= Footer ======= -->
   <footer id="footer">
+    <div style="height:50px;margin-top:20px"> 
       <div class="copyright">
         Designed with <span style="color: #e25555;">&#9829; </span> by <strong>Farzam Alam</strong>
       </div>
@@ -143,6 +147,7 @@
 
         <a href= "https://www.linkedin.com/in/farzamalam/" style="padding-right: 10px;">  <span class="iconify" data-icon="fa-linkedin" data-inline="false"></span>  </a> 
           </div>
+    </div>
   </footer><!-- End Footer -->
 
 </body>
