@@ -75,7 +75,7 @@ func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	days := mux.Vars(r)["days"]
 	if shorturl == "" || days == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Query params"))
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params"))
 	}
 	d, err := strconv.Atoi(days)
 	if err != nil {
@@ -95,11 +95,12 @@ func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// Path : GET /api/v1/{shorturl}/{days}
 func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	days := mux.Vars(r)["days"]
 	if days == "" || shorturl == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Query params."))
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params."))
 		return
 	}
 	skip, limit := getSkipAndLimit(r)
@@ -122,6 +123,51 @@ func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Path : GET /api/v1/{shorturl}/country/{country}
+func TotalDetailsByCountryHandler(w http.ResponseWriter, r *http.Request) {
+	shorturl := mux.Vars(r)["shorturl"]
+	country := mux.Vars(r)["country"]
+	if shorturl == "" || country == "" {
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params"))
+		return
+	}
+	cd := &models.ClickDetails{
+		ShortURL: shorturl,
+	}
+	skip, limit := getSkipAndLimit(r)
+
+	data, err := cd.GetClicksDetailsByCountry(country, skip, limit)
+	if err != nil {
+		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		return
+	}
+	resp := utils.Message(true, "Success")
+	resp["data"] = data
+	utils.Respond(w, http.StatusOK, resp)
+}
+
+// Path : GET /api/v1/{shorturl}/city/{city}
+func TotalDetailsByCityHandler(w http.ResponseWriter, r *http.Request) {
+	shorturl := mux.Vars(r)["shorturl"]
+	city := mux.Vars(r)["city"]
+	if shorturl == "" || city == "" {
+		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path Params."))
+		return
+	}
+	skip, limit := getSkipAndLimit(r)
+	cd := &models.ClickDetails{
+		ShortURL: shorturl,
+	}
+
+	data, err := cd.GetClicksDetailsByCity(city, skip, limit)
+	if err != nil {
+		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		return
+	}
+	resp := utils.Message(true, "Success")
+	resp["data"] = data
+	utils.Respond(w, http.StatusOK, resp)
+}
 func getSkipAndLimit(r *http.Request) (int64, int64) {
 	skip := r.URL.Query().Get("skip")
 	s, err := strconv.Atoi(skip)
