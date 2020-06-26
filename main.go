@@ -54,5 +54,5 @@ func main() {
 	r.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 	// Starting Server.
 	log.Println("Starting Server at : ", port)
-	log.Fatal(http.ListenAndServeTLS(":"+port, "/root/https-server.crt", "/root/https-server.key", r))
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
