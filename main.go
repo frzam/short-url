@@ -29,7 +29,7 @@ func main() {
 	fullchain := os.Getenv("fullchain")
 	privkey := os.Getenv("privkey")
 
-	file, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND, 0644)
+	file, err := os.OpenFile("info.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal("Error while opening info.log : ", err)
 	}
