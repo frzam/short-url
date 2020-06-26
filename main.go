@@ -15,8 +15,10 @@ import (
 // TO DO:
 // Total Count Bug.		--> Done.
 // SSL and Deploy	--> Done.
+// info.log		--> Done.
 // Integrate catcha
 // Write Comments and Deploy.
+// Prepare README.md
 
 func main() {
 	port := os.Getenv("PORT")
@@ -26,6 +28,7 @@ func main() {
 	env := os.Getenv("env")
 	fullchain := os.Getenv("fullchain")
 	privkey := os.Getenv("privkey")
+
 	file, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal("Error while opening info.log : ", err)
