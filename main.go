@@ -54,5 +54,5 @@ func main() {
 	r.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 	// Starting Server.
 	log.Println("Starting Server at : ", port)
-	log.Fatal(http.ListenAndServe(":"+port, r))
+	log.Fatal(http.ListenAndServeTLS(":"+port, "/etc/letsencrypt/live/shrt-url.xyz/fullchain.pem", "/etc/letsencrypt/live/shrt-url.xyz/privkey.pem", r))
 }
