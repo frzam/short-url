@@ -14,7 +14,7 @@ import (
 
 // TO DO:
 // Total Count Bug.		--> Done.
-// SSL and Deploy
+// SSL and Deploy	--> Done.
 // Integrate catcha
 // Write Comments and Deploy.
 
@@ -26,9 +26,12 @@ func main() {
 	env := os.Getenv("env")
 	fullchain := os.Getenv("fullchain")
 	privkey := os.Getenv("privkey")
-	defer models.GetMongoClient().Disconnect(context.TODO())
-	defer models.GetRedisClient().Close()
-
+	file, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal("Error while opening info.log : ", err)
+	}
+	defer file.Close()
+	log.SetOutput(file)
 	// Create a new router instance
 	r := mux.NewRouter()
 	r.Use(handlers.LoggingMiddleware)
@@ -65,6 +68,10 @@ func main() {
 	} else {
 		log.Fatal(http.ListenAndServe(":"+port, r))
 	}
+
+	defer models.GetMongoClient().Disconnect(context.TODO())
+	defer models.GetRedisClient().Close()
+
 }
 
 func redirectTLS(w http.ResponseWriter, r *http.Request) {
