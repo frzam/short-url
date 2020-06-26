@@ -23,7 +23,9 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-
+	env := os.Getenv("env")
+	fullchain := os.Getenv("fullchain")
+	privkey := os.Getenv("privkey")
 	defer models.GetMongoClient().Disconnect(context.TODO())
 	defer models.GetRedisClient().Close()
 
@@ -54,5 +56,17 @@ func main() {
 	r.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 	// Starting Server.
 	log.Println("Starting Server at : ", port)
-	log.Fatal(http.ListenAndServeTLS(":"+port, "/etc/letsencrypt/live/shrt-url.xyz/fullchain.pem", "/etc/letsencrypt/live/shrt-url.xyz/privkey.pem", r))
+
+	if env == "PROD" {
+		log.Fatal(http.ListenAndServeTLS(":"+port, fullchain, privkey, r))
+		go func() {
+			log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(redirectTLS)))
+		}()
+	} else {
+		log.Fatal(http.ListenAndServe(":"+port, r))
+	}
+}
+
+func redirectTLS(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "https://shrt-url.xyz/"+r.RequestURI, http.StatusMovedPermanently)
 }
