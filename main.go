@@ -58,15 +58,19 @@ func main() {
 	log.Println("Starting Server at : ", port)
 
 	if env == "PROD" {
+		go http.ListenAndServe(":80", http.HandlerFunc(redirectTLS))
+
 		log.Fatal(http.ListenAndServeTLS(":"+port, fullchain, privkey, r))
-		go func() {
-			log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(redirectTLS)))
-		}()
+
 	} else {
 		log.Fatal(http.ListenAndServe(":"+port, r))
 	}
 }
 
 func redirectTLS(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "https://shrt-url.xyz/"+r.RequestURI, http.StatusMovedPermanently)
+	target := "https://" + r.Host + r.URL.Path
+	if len(r.URL.RawQuery) > 0 {
+		target += "?" + r.URL.RawQuery
+	}
+	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
 }
