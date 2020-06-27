@@ -10,6 +10,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// GetClickDetailsHandler is used to get the click details for one particular shorturl.
+// It takes two optional params skip and limit.
 // Path: GET /api/v1/{shorturl}?skip=0&limit=100
 func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	shortURL := mux.Vars(r)["shorturl"]
@@ -31,6 +33,7 @@ func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// DeleteClickDetailsHandler is used to delete all the details of a shorturl.
 // Path : DELETE /api/v1/{shorturl}
 func DeleteClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	shortURL := mux.Vars(r)["shorturl"]
@@ -155,6 +158,8 @@ func TotalDetailsByCountryHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// TotalDetailsByCityHandler is used to get the click details per city.
+// It takes two query param skip and limit where limit <= 100.
 // Path : GET /api/v1/{shorturl}/city/{city}
 func TotalDetailsByCityHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
@@ -178,6 +183,8 @@ func TotalDetailsByCityHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// TotalDetailsByIP returns the click details by particular IP.
+// It uses two query params skip and limit where limit <= 100.
 // Path : GET /api/v1/{shorturl}/ip/{ip}
 func TotalDetailsByIP(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
@@ -200,6 +207,7 @@ func TotalDetailsByIP(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// ClickCountsByIP returns the total click count from one IP address.
 // Path : GET /api/v1/{shorturl}/ip/{ip}/totalcount
 func ClickCountsByIP(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
@@ -221,6 +229,10 @@ func ClickCountsByIP(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// getSkipAndLimit grabs the query params skip and limit,
+// and check whether they are correct or not.
+// If skip is not present in the param then skip = 0.
+// If limit is not present or the limit is more than 100 then limit = 100.
 func getSkipAndLimit(r *http.Request) (int64, int64) {
 	skip := r.URL.Query().Get("skip")
 	s, err := strconv.Atoi(skip)

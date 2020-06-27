@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// ClickDetails contains the complete details one a client clicks on the shorturl.
 type ClickDetails struct {
 	ShortURL    string    `json:"short_url"`
 	OriginalURL string    `json:"original_url"`
@@ -19,6 +20,7 @@ type ClickDetails struct {
 	IPInfo      IPInfo    `json:"ip_info"`
 }
 
+// IPInfo contains the ip related information. It is the reponse from ipstack api.
 type IPInfo struct {
 	IP            string   `json:"ip"`
 	Type          string   `json:"type"`
@@ -34,11 +36,15 @@ type IPInfo struct {
 	Longitude     float64  `json:"longitude"`
 	Location      Location `json:"location"`
 }
+
+// Languages stuct is used denote one language.
 type Languages struct {
 	Code   string `json:"code"`
 	Name   string `json:"name"`
 	Native string `json:"native"`
 }
+
+// Location defines the location of a client in geometrical context.
 type Location struct {
 	GeonameID               int         `json:"geoname_id"`
 	Capital                 string      `json:"capital"`
@@ -50,6 +56,8 @@ type Location struct {
 	IsEu                    bool        `json:"is_eu"`
 }
 
+// GetIPInfo is used to call ipstack api and it returns the IPInfo instance.
+// This contains complete information about one ip.
 func GetIPInfo(ip string) IPInfo {
 	apiKey := os.Getenv("ipstack_apiKey")
 	if apiKey == "" {
@@ -69,6 +77,8 @@ func GetIPInfo(ip string) IPInfo {
 	return ipInfo
 }
 
+// InsertClickDetails is used to insert clickDetails object inside click_details collection.
+// It returns error if any.
 func (cd *ClickDetails) InsertClickDetails() error {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 
@@ -81,10 +91,15 @@ func (cd *ClickDetails) InsertClickDetails() error {
 	return nil
 }
 
+// GetTotalClicksDetails is used to return the slice of *ClickDetails.
+// It calls GetNdayClicksDetails with days as zero. Thus the called method returns all
+// the *ClickDetails from 00-00-0000.
 func (cd *ClickDetails) GetTotalClicksDetails(skip, limit int64) ([]*ClickDetails, error) {
 	return cd.GetNdayClicksDetails(0, skip, limit)
 }
 
+// GetNdayClicksDetails returns the slice of ClickDetails and error if any for past n days.
+// It takes skip and limit params to filter out the result (pagination).
 func (cd *ClickDetails) GetNdayClicksDetails(days int, skip, limit int64) ([]*ClickDetails, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	var from time.Time
@@ -119,6 +134,8 @@ func (cd *ClickDetails) GetNdayClicksDetails(days int, skip, limit int64) ([]*Cl
 	return clickDetails, nil
 }
 
+// DeleteClickDetails is used to delete the complete click details data basis shorturl.
+// It returns error if any.
 func (cd *ClickDetails) DeleteClickDetails() error {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
@@ -165,6 +182,9 @@ func (cd *ClickDetails) GetNdayClicksCount(days int) (int, error) {
 	return int(count), nil
 }
 
+// GetClicksDetailsByCountry is used to retrieve the click details by country.
+// It is passed with country, skip and limit.
+// It returns the slice of *ClickDetails and error if any.
 func (cd *ClickDetails) GetClicksDetailsByCountry(country string, skip, limit int64) ([]*ClickDetails, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := &bson.M{
@@ -193,6 +213,9 @@ func (cd *ClickDetails) GetClicksDetailsByCountry(country string, skip, limit in
 	return clickDetails, err
 }
 
+// GetClicksDetailsByCity is used to get the click details by city.
+// It takes skip and limit and uses it in filter.
+// It returns slice of *ClickDetails and error if any.
 func (cd *ClickDetails) GetClicksDetailsByCity(city string, skip, limit int64) ([]*ClickDetails, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
@@ -221,6 +244,8 @@ func (cd *ClickDetails) GetClicksDetailsByCity(city string, skip, limit int64) (
 	return clickDetails, nil
 }
 
+// GetClicksCountByIP is returns the total count for one ip.
+// It returns clickCount and error if any.
 func (cd *ClickDetails) GetClicksCountByIP(ip string) (int, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
@@ -235,6 +260,8 @@ func (cd *ClickDetails) GetClicksCountByIP(ip string) (int, error) {
 	return int(count), nil
 }
 
+// GetClicksDetailsByIP is used to get the slice of ClickDetails for one particular client IP.
+// It takes skip and limit param to filter the result.
 func (cd *ClickDetails) GetClicksDetailsByIP(ip string, skip, limit int64) ([]*ClickDetails, error) {
 	collection := GetMongoClient().Database("shorturl").Collection("click_details")
 	filter := bson.M{
