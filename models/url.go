@@ -126,18 +126,16 @@ func (url *URL) GetURL() (string, error) {
 // If it is not present then then it calls GetIPInfo to call the api to get the ip detals.
 // Then it inserts the click details, and sets the caches the click details.
 func (url *URL) AddClickDetails(ip string) error {
+	fmt.Println("AddClickDetails()")
 	originalURL, _ := url.GetCacheURL()
-	var ipInfo IPInfo
-	ipInfo, err := GetCacheIPInfo(ip)
-	if err != nil {
-		ipInfo = GetIPInfo(ip)
-	}
+
 	cd := &ClickDetails{
 		OriginalURL: originalURL,
 		ShortURL:    url.ShortURL,
-		IPInfo:      ipInfo,
+		IPInfo:      GetIPInfo(ip),
+		CurrentTime: time.Now(),
 	}
-	err = cd.InsertClickDetails()
+	err := cd.InsertClickDetails()
 	if err != nil {
 		log.Println("Error while Calling InsertClickDetails() : ", err)
 		return err

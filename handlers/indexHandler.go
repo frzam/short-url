@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -22,7 +21,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 // Original url.
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	shortURL := r.URL.Path[1:]
-	fmt.Println("shortURL : ", shortURL)
 	url := &models.URL{
 		ShortURL: shortURL,
 	}
@@ -44,7 +42,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Call AddClickDetails to Save the click details data in mongoDB.
 	_ = url.AddClickDetails(ip)
 
-	fmt.Println("originalURL : ", originalURL)
 	http.Redirect(w, r, originalURL, http.StatusFound)
 }
 

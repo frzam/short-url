@@ -41,7 +41,7 @@ func (url *URL) SetCacheURL() error {
 	return GetRedisClient().Set(ctx, url.ShortURL, url.OriginalURL, time.Hour*2).Err()
 }
 
-// GetCacheURl is used to get the cache original url quickly.
+// GetCacheURL is used to get the cache original url quickly.
 func (url *URL) GetCacheURL() (string, error) {
 	return GetRedisClient().Get(ctx, url.ShortURL).Result()
 }
