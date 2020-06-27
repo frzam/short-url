@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Path: Get /api/v1/{shorturl}?skip=0&limit=100
+// Path: GET /api/v1/{shorturl}?skip=0&limit=100
 func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	shortURL := mux.Vars(r)["shorturl"]
 	skip, limit := getSkipAndLimit(r)
@@ -31,7 +31,7 @@ func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
-// Path : Delete /api/v1/{shorturl}
+// Path : DELETE /api/v1/{shorturl}
 func DeleteClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	shortURL := mux.Vars(r)["shorturl"]
 	if shortURL == "" {
@@ -50,6 +50,8 @@ func DeleteClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusAccepted, utils.Message(true, "Deleted!"))
 }
 
+// TotalCountHandler returns total count of hits for one particular shorturl.
+// It taskes the shorturl from the url param.
 // Path : GET /api/v1/{shorturl}/totalcount
 func TotalCountHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
@@ -70,7 +72,9 @@ func TotalCountHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
-// Path : Get /api/v1/{shorturl}/totalcount/{days}
+// TotalCountNdaysHandler is used to get the total hit count for past n days.
+// It takes shorturl from the url param and days(days >= 1).
+// Path : GET /api/v1/{shorturl}/totalcount/{days}
 func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	days := mux.Vars(r)["days"]
@@ -95,6 +99,9 @@ func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Respond(w, http.StatusOK, resp)
 }
 
+// TotalDetailsNdaysHandler is used to return the total data response for past n days.
+// Days should always be more than 0.
+// It takes the skip and limit query param.. Max(limit) <= 100
 // Path : GET /api/v1/{shorturl}/{days}
 func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
@@ -123,6 +130,8 @@ func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// TotalDetailsByCountryHandler is used to get the click details per country.
+// It accepts skip and limit as query params. limit <= 100.
 // Path : GET /api/v1/{shorturl}/country/{country}
 func TotalDetailsByCountryHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]

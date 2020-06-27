@@ -5,17 +5,18 @@ import (
 	"net/http"
 )
 
+// LoggingMiddleware is used to log the request URL and IP of the client.
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("url : ", r.URL.Path)
-		ipAddress := r.Header.Get("X-Real-Ip")
+		ipAddress := r.Header.Get("X-Real-IP")
 		if ipAddress == "" {
 			ipAddress = r.Header.Get("X-Forwarded-For")
 		}
 		if ipAddress == "" {
 			ipAddress = r.RemoteAddr
 		}
-		log.Println("IPAdress : ", ipAddress)
+		log.Println("URL : ", r.URL.Path)
+		log.Println("IP : ", ipAddress)
 		next.ServeHTTP(w, r)
 	})
 }

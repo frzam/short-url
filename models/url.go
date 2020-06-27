@@ -1,12 +1,5 @@
 package models
 
-// TO DO :
-// 1. Connect to MongoDB and create a new client.	--> Done.
-// 2. Create a new database and a collection to store the details of url.	--> Done.
-// 3. Make func to add a document in collection.	--> Done.
-// 4. Make func to get a document from collection.	--> Done.
-// 5. Make func to delete a document from collection.	--> Done.
-
 import (
 	"context"
 	"fmt"
@@ -21,9 +14,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+// client is *mongo.Client that is only used with GetMongoClient().
+// In this package or outside this package.
 var client *mongo.Client
+
+// ctx is running in the background.
 var ctx = context.Background()
 
+// URL struct contains complete details about a url.
+// It contains the OrginalURL provided by the client, it
+// contains the UserID. URL collection in mongoDB contains data
+// in the format of url struct.
 type URL struct {
 	ShortURL       string    `bson:"short_url"`
 	OriginalURL    string    `bson:"original_url"`
@@ -32,6 +33,9 @@ type URL struct {
 	UserID         int       `bson:"user_id"`
 }
 
+// init is used to load the environment variables and establish mongoDB
+// connection. It sets *mongo.Client and then this client is used by
+// by all the methods and function using GetMongoClient().
 func init() {
 	err := godotenv.Load()
 	if err != nil {
@@ -47,26 +51,6 @@ func init() {
 	if err != nil {
 		log.Fatal("Error while Ping to mongoDB : ", err)
 	}
-
-	// 	_, _ = cd.GetClickDetails()
-	// 	//_ = cd.DeteteClickDetails()
-	// 	_ = cd.SetCacheClickDetails()
-	// 	_ = cd.GetCacheClickDetails()
-	// 	fmt.Println("cd : ", cd.IPInfo)
-
-	// cd := &ClickDetails{
-	// 	ShortURL:    "s-url",
-	// 	CurrentTime: time.Now(),
-	// }
-	// //_ = cd.InsertClickDetails()
-	// _, _ = cd.GetNdayClicksDetails(2, 20, 10)
-
-	// _, _ = cd.GetTotalClicksCount()
-	// _, _ = cd.GetNdayClicksCount(2)
-	// _, _ = cd.GetClicksDetailsByCountry("China", 0, 10)
-	// _, _ = cd.GetClicksDetailsByCity("Powai", 0, 10)
-	// _, _ = cd.GetClicksCountByIP("43.239.115.230")
-	// _, _ = cd.GetClicksDetailsByIP("43.239.115.230", 0, 10)
 }
 
 // InsertURL is used to insert a new url into the collection.
@@ -92,20 +76,25 @@ func (url *URL) InsertURL() error {
 	fmt.Println("id : ", res.InsertedID)
 	return nil
 }
+
+// DeleteURL is used to delete a short url from the url collection.
+// It doesn't delete the click details.
 func (url *URL) DeleteURL() error {
-	log.Println("Inside DeleteURL()")
+	log.Println("URL Deleted : ", url.ShortURL)
 	collection := GetMongoClient().Database("shorturl").Collection("url")
 	filter := bson.M{
 		"_id": url.ShortURL,
 	}
 	_, err := collection.DeleteOne(ctx, filter)
 	if err != nil {
-		log.Println("Error while DeleteURL : ", err)
+		log.Println("Error in DeleteURL() : ", err)
 		return err
 	}
 	return nil
 }
 
+// prepareURL calls generateHash() to generateShortURL and it set the expiration
+// time to one month from the current time.
 func (url *URL) prepareURL() {
 	url.ShortURL = generateHash(url.OriginalURL)
 	url.CreationDate = time.Now()
@@ -114,9 +103,8 @@ func (url *URL) prepareURL() {
 
 // GetURL is used to retrive original url basis the short url and current date.
 // If the current date is after or equal to expiry date then we are not returning anything.
-// It returns the original url and error.
+// It returns the original url and error. Before returning it sets the into the cache.
 func (url *URL) GetURL() (string, error) {
-	fmt.Println("GetURL() Called!")
 	collection := GetMongoClient().Database("shorturl").Collection("url")
 	filter := bson.M{
 		"_id": url.ShortURL,
@@ -124,7 +112,7 @@ func (url *URL) GetURL() (string, error) {
 			"$gt": time.Now(),
 		},
 	}
-	err := collection.FindOne(ctx, filter).Decode(&url) //
+	err := collection.FindOne(ctx, filter).Decode(&url)
 	if err != nil {
 		log.Println("Error while getting the document :", err)
 		return "", nil
@@ -133,16 +121,23 @@ func (url *URL) GetURL() (string, error) {
 	return url.OriginalURL, nil
 }
 
+// AddClickDetails is used to add click details for a shorturl.
+// It gets the originalURL from GetCacheURL, then it gets the GetCacheIPInfo.
+// If it is not present then then it calls GetIPInfo to call the api to get the ip detals.
+// Then it inserts the click details, and sets the caches the click details.
 func (url *URL) AddClickDetails(ip string) error {
-	// TO DO : think about calling the Cache for same ip.
 	originalURL, _ := url.GetCacheURL()
+	var ipInfo IPInfo
+	ipInfo, err := GetCacheIPInfo(ip)
+	if err != nil {
+		ipInfo = GetIPInfo(ip)
+	}
 	cd := &ClickDetails{
 		OriginalURL: originalURL,
 		ShortURL:    url.ShortURL,
-		CurrentTime: time.Now(),
-		IPInfo:      GetIPInfo(ip),
+		IPInfo:      ipInfo,
 	}
-	err := cd.InsertClickDetails()
+	err = cd.InsertClickDetails()
 	if err != nil {
 		log.Println("Error while Calling InsertClickDetails() : ", err)
 		return err

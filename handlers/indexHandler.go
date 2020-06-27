@@ -48,6 +48,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, originalURL, http.StatusFound)
 }
 
+// getIPAddress from the request.
 func getIPAddress(r *http.Request) string {
 	ip := r.Header.Get("X-Real-IP")
 	if ip == "" {
@@ -59,6 +60,5 @@ func getIPAddress(r *http.Request) string {
 	if strings.Contains(ip, ":") {
 		ip = ip[:strings.Index(ip, ":")]
 	}
-
 	return ip
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// generateHash is takes the originalURL and returns the hashed shorturl.
 func generateHash(originalURL string) string {
 	// Generate current timestamp and appending it to url to create a unique hash even
 	// for same url and return sha256 hash.
