@@ -6,6 +6,7 @@
 
 <p align="center">
     <a href = "#about">About</a> |
+    <a href = "#features">Features </a> |
     <a href = "#api">API</a> |
     <a href = "#installation">Installation</a> |
     <a href = "#license">License</a> 
@@ -20,6 +21,14 @@ It has an amazing API for getting the click details of each shorturl that has be
 <p align="center">
   <img src="assets/shorturl.gif" />
 </p>
+
+## Features
+
+* Built **six** characters long links.
+* **TSL** based encryptions for all the URLs.
+* RESTful based API to get the click counts.
+* API for getting click details which includes its IP, Location and TimeStamp ets.
+* API supports searching click details by city, country or IP.
 
 ## API
 
@@ -55,12 +64,29 @@ It has an amazing API for getting the click details of each shorturl that has be
     **Example:**  {shorturl} = 52ea82r *and* {city} = Powai. Try it out [here.](https://shrt-url.xyz)
 
 
-* #### Get all the clickk details by an IP for one shorturl.
+* #### Get all the click details by an IP for one shorturl.
     ```
     https://shrt-url.xyz/api/v1/{shorturl}/ip/{ip}
     ```
     **Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
 
+* #### Get total click count for one shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/totalcount
+    ```
+    **Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
+
+* #### Get click count for past N days for one shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/totalcount/{days}
+    ```
+     **Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
+
+* #### Get total click count from one IP for one shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/ip/{ip}/totalcount/
+    ```
+     **Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
 
 ## Installation
 To run the application you need to type below mentioned command.
@@ -83,3 +109,6 @@ fullchain= Ex: /path/fullchain.pem
 privkey= Ex: /path/privkey.pem
 privateToken=Ex: Captcha Token.
 ```
+
+## License
+Short-URL is provided under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) license. 
