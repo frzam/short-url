@@ -13,7 +13,7 @@
 </p>
 
 ## About
-> Short-URL is used to make six characters URL and it can be retrived at lightning speed.
+> Short-URL is used to make six characters URL and it can be retrived at lightning speed. [Try it out.](  https://shrt-url.xyz/)
 
 It has an amazing API for getting the click details of each shorturl that has been clicked. 
 
@@ -27,7 +27,7 @@ It has an amazing API for getting the click details of each shorturl that has be
 * Built **six** characters long links.
 * **TSL** based encryptions for all the URLs.
 * RESTful based API to get the click counts.
-* API for getting click details which includes its IP, Location and TimeStamp ets.
+* API for getting click details which includes its IP, Location and TimeStamp etc.
 * API supports searching click details by city, country or IP.
 
 ## API
