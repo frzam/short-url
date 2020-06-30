@@ -1,5 +1,5 @@
 <div align="center">
-    <h2></h2>
+    <h2>Shorten Bulky Links</h2>
     <h1>Short-URL</h1>
     <h4>Build simple and reliable short links.</h4>
 </div>
@@ -15,6 +15,11 @@
 > Short-URL is used to make six characters URL and it can be retrived at lightning speed.
 
 It has an amazing API for getting the click details of each shorturl that has been clicked. 
+
+<p align="center">
+  <img src="assets/shorturl.gif" />
+</p>
+
 
 ## Installation
 To run the application you need to type below mentioned command.
