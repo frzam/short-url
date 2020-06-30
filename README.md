@@ -23,43 +23,43 @@ It has an amazing API for getting the click details of each shorturl that has be
 
 ## API
 
-#### Get all click details for particular shorturl.
-```
-https://shrt-url.xyz/api/v1/{shorturl}?skip=0&limit=100
-```
-**Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
+* #### Get all click details for particular shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}?skip=0&limit=100
+    ```
+    **Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
 
-#### Get all click details for particular shorturl for past N days.
-```
-https://shrt-url.xyz/api/v1/{shorturl}/{days}?skip=0&limit=100
-```
-**Example:**  {shorturl} = 52ea82r *and* {days} = 7. Try it out [here.](https://shrt-url.xyz)
+* #### Get all click details for particular shorturl for past N days.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/{days}?skip=0&limit=100
+    ```
+    **Example:**  {shorturl} = 52ea82r *and* {days} = 7. Try it out [here.](https://shrt-url.xyz)
 
-#### Delete all the details for a url.
-```
-https://shrt-url.xyz/api/v1/{shorturl}
-```
-**Example:**  Method:  *DELETE*. Try it out [here.](https://shrt-url.xyz)
+* #### Delete all the details for a url.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}
+    ```
+    **Example:**  Method:  *DELETE*. Try it out [here.](https://shrt-url.xyz)
 
-#### Get all the click details by a country for one shorturl.
-```
-https://shrt-url.xyz/api/v1/{shorturl}/country/{country}
-```
-**Example:**  {shorturl} = 52ea82r *and* {country} = India. Try it out [here.](https://shrt-url.xyz)
-
-
-#### Get all the click details by a city for one shorturl.
-```
-https://shrt-url.xyz/api/v1/{shorturl}/city/{city}
-```
-**Example:**  {shorturl} = 52ea82r *and* {city} = Powai. Try it out [here.](https://shrt-url.xyz)
+* #### Get all the click details by a country for one shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/country/{country}
+    ```
+    **Example:**  {shorturl} = 52ea82r *and* {country} = India. Try it out [here.](https://shrt-url.xyz)
 
 
-#### Get all the clickk details by an IP for one shorturl.
-```
-https://shrt-url.xyz/api/v1/{shorturl}/ip/{ip}
-```
-**Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
+* #### Get all the click details by a city for one shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/city/{city}
+    ```
+    **Example:**  {shorturl} = 52ea82r *and* {city} = Powai. Try it out [here.](https://shrt-url.xyz)
+
+
+* #### Get all the clickk details by an IP for one shorturl.
+    ```
+    https://shrt-url.xyz/api/v1/{shorturl}/ip/{ip}
+    ```
+    **Example:**  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz)
 
 
 ## Installation
