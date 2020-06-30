@@ -28,7 +28,8 @@ It has an amazing API for getting the click details of each shorturl that has be
 * **TSL** based encryptions for all the URLs.
 * RESTful based API to get the click counts.
 * API for getting click details which includes its IP, Location and TimeStamp etc.
-* API supports searching click details by city, country or IP.
+* API supports searching click details by **city**, **country** or **IP**.
+* Google **reCaptcha** is implemented to prevent from bots. 
 
 ## API
 
