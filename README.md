@@ -1,6 +1,6 @@
 <div align="center">
     <h2>Shorten Bulky Links</h2>
-    <h1>Short-URL</h1>
+    <h1>Shrt-URL</h1>
     <h4>Build simple and reliable short links.</h4>
 </div>
 
