@@ -6,8 +6,8 @@
 
 <p align="center">
     <a href = "#about">About</a> |
-    <a href = "#installation">Installation</a> |
     <a href = "#api">API</a> |
+    <a href = "#installation">Installation</a> |
     <a href = "#license">License</a> 
 </p>
 
@@ -16,14 +16,22 @@
 
 It has an amazing API for getting the click details of each shorturl that has been clicked. 
 
+
 <p align="center">
   <img src="assets/shorturl.gif" />
 </p>
 
+## API
+
+#### Get all click details for particular shorturl.
+```
+https://shrt-url.xyz/api/v1/{shorturl}?skip=0&limit=100
+```
+Example:  {shorturl} = 52ea82r. Try it out [here.](https://shrt-url.xyz/#/Click%20Details/getAllClickDetails)
 
 ## Installation
 To run the application you need to type below mentioned command.
-```
+```bash
 go run main.go
 ```
 To successfully run the application you need to set below mentioned environment variables on your system.
