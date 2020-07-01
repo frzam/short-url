@@ -41,9 +41,9 @@ func init() {
 	if err != nil {
 		log.Println("Error while loading the .env file")
 	}
-	name := os.Getenv("primaryDB_name")
-	host := os.Getenv("primaryDB_host")
-	port := os.Getenv("primaryDB_port")
+	name := os.Getenv("primary_db_name")
+	host := os.Getenv("primary_db_host")
+	port := os.Getenv("primary_db_port")
 
 	uri := fmt.Sprintf("%s://%s:%s", name, host, port)
 	client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))

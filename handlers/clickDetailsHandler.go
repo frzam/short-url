@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"short-url/models"
-	"short-url/utils"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -25,12 +24,12 @@ func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if res == nil {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "No Data is found."))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "No Data is found."))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["data"] = res
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // DeleteClickDetailsHandler is used to delete all the details of a shorturl.
@@ -38,7 +37,7 @@ func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	shortURL := mux.Vars(r)["shorturl"]
 	if shortURL == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Empty shorturl."))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Empty shorturl."))
 		return
 	}
 	cd := &models.ClickDetails{
@@ -47,10 +46,10 @@ func DeleteClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	err := cd.DeleteClickDetails()
 	if err != nil {
 		log.Println("Error while Callin DeleteClickDetails() : ", err)
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server error."))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server error."))
 		return
 	}
-	utils.Respond(w, http.StatusAccepted, utils.Message(true, "Deleted!"))
+	models.Respond(w, http.StatusAccepted, models.Message(true, "Deleted!"))
 }
 
 // TotalCountHandler returns total count of hits for one particular shorturl.
@@ -59,7 +58,7 @@ func DeleteClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
 func TotalCountHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	if shorturl == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid shorturl."))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid shorturl."))
 		return
 	}
 	cd := &models.ClickDetails{
@@ -67,12 +66,12 @@ func TotalCountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	count, err := cd.GetTotalClicksCount()
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error"))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["total_count"] = count
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // TotalCountNdaysHandler is used to get the total hit count for past n days.
@@ -82,7 +81,7 @@ func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	days := mux.Vars(r)["days"]
 	if shorturl == "" || days == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params"))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid Path params"))
 	}
 	d, err := strconv.Atoi(days)
 	if err != nil {
@@ -94,12 +93,12 @@ func TotalCountNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	count, err := cd.GetNdayClicksCount(d)
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error."))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error."))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["count"] = count
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // TotalDetailsNdaysHandler is used to return the total data response for past n days.
@@ -110,7 +109,7 @@ func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	days := mux.Vars(r)["days"]
 	if days == "" || shorturl == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params."))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid Path params."))
 		return
 	}
 	skip, limit := getSkipAndLimit(r)
@@ -124,12 +123,12 @@ func TotalDetailsNdaysHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := cd.GetNdayClicksDetails(d, skip, limit)
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error"))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["data"] = data
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 
 }
 
@@ -140,7 +139,7 @@ func TotalDetailsByCountryHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	country := mux.Vars(r)["country"]
 	if shorturl == "" || country == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params"))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid Path params"))
 		return
 	}
 	cd := &models.ClickDetails{
@@ -150,12 +149,12 @@ func TotalDetailsByCountryHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err := cd.GetClicksDetailsByCountry(country, skip, limit)
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error"))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["data"] = data
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // TotalDetailsByCityHandler is used to get the click details per city.
@@ -165,7 +164,7 @@ func TotalDetailsByCityHandler(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	city := mux.Vars(r)["city"]
 	if shorturl == "" || city == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path Params."))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid Path Params."))
 		return
 	}
 	skip, limit := getSkipAndLimit(r)
@@ -175,12 +174,12 @@ func TotalDetailsByCityHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err := cd.GetClicksDetailsByCity(city, skip, limit)
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error"))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["data"] = data
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // TotalDetailsByIP returns the click details by particular IP.
@@ -190,7 +189,7 @@ func TotalDetailsByIP(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	ip := mux.Vars(r)["ip"]
 	if shorturl == "" || ip == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path params"))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid Path params"))
 		return
 	}
 	skip, limit := getSkipAndLimit(r)
@@ -199,12 +198,12 @@ func TotalDetailsByIP(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := cd.GetClicksDetailsByIP(ip, skip, limit)
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error"))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error"))
 		return
 	}
-	resp := utils.Message(true, "Sucess")
+	resp := models.Message(true, "Sucess")
 	resp["data"] = data
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // ClickCountsByIP returns the total click count from one IP address.
@@ -213,7 +212,7 @@ func ClickCountsByIP(w http.ResponseWriter, r *http.Request) {
 	shorturl := mux.Vars(r)["shorturl"]
 	ip := mux.Vars(r)["ip"]
 	if shorturl == "" || ip == "" {
-		utils.Respond(w, http.StatusBadRequest, utils.Message(false, "Invalid Path Param"))
+		models.Respond(w, http.StatusBadRequest, models.Message(false, "Invalid Path Param"))
 		return
 	}
 	cd := &models.ClickDetails{
@@ -221,12 +220,12 @@ func ClickCountsByIP(w http.ResponseWriter, r *http.Request) {
 	}
 	count, err := cd.GetClicksCountByIP(ip)
 	if err != nil {
-		utils.Respond(w, http.StatusInternalServerError, utils.Message(false, "Internal Server Error."))
+		models.Respond(w, http.StatusInternalServerError, models.Message(false, "Internal Server Error."))
 		return
 	}
-	resp := utils.Message(true, "Success")
+	resp := models.Message(true, "Success")
 	resp["total_count"] = count
-	utils.Respond(w, http.StatusOK, resp)
+	models.Respond(w, http.StatusOK, resp)
 }
 
 // getSkipAndLimit grabs the query params skip and limit,

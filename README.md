@@ -97,18 +97,18 @@ go run main.go
 To successfully run the application you need to set below mentioned environment variables on your system.
 
 ```
-primaryDB_name = 
-primaryDB_host = 
-primaryDB_port = 
-cacheDB_name =  
-cacheDB_host = 
-cacheDB_port =
+primary_db_name = 
+primary_db_host = 
+primary_db_port = 
+cache_db_name =  
+cache_db_host = 
+cache_db_port =
 host = 
-ipstack_apiKey = Ex: API Key for ipstack
+ipstack_api_key = Ex: API Key for ipstack
 env = DEV
 fullchain= Ex: /path/fullchain.pem
 privkey= Ex: /path/privkey.pem
-privateToken=Ex: Captcha Token.
+private_token=Ex: Captcha Token.
 ```
 
 ## License

@@ -59,7 +59,7 @@ type Location struct {
 // GetIPInfo is used to call ipstack api and it returns the IPInfo instance.
 // This contains complete information about one ip.
 func GetIPInfo(ip string) IPInfo {
-	apiKey := os.Getenv("ipstack_apiKey")
+	apiKey := os.Getenv("ipstack_api_key")
 	if apiKey == "" {
 		log.Println("apiKey is empty")
 	}

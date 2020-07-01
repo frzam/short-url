@@ -57,7 +57,7 @@ func GenerateHandler(w http.ResponseWriter, r *http.Request) {
 func verifyCaptcha(r *http.Request) bool {
 	endPoint := "https://www.google.com/recaptcha/api/siteverify"
 	capReq := captchaReq{
-		secret: os.Getenv("privateToken"),
+		secret: os.Getenv("private_token"),
 		token:  r.FormValue("g-recaptcha-response"),
 	}
 	req, err := json.Marshal(capReq)

@@ -18,8 +18,8 @@ var rdb *redis.Client
 // init is used to initialize the redis db client.
 func init() {
 	_ = godotenv.Load()
-	host := os.Getenv("cacheDB_host")
-	port := os.Getenv("cacheDB_port")
+	host := os.Getenv("cache_db_host")
+	port := os.Getenv("cache_db_port")
 	uri := fmt.Sprintf("%s:%s", host, port)
 
 	rdb = redis.NewClient(&redis.Options{
