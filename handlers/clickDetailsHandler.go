@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"short-url/models"
@@ -12,24 +13,28 @@ import (
 // GetClickDetailsHandler is used to get the click details for one particular shorturl.
 // It takes two optional params skip and limit.
 // Path: GET /api/v1/{shorturl}?skip=0&limit=100
-func GetClickDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	shortURL := mux.Vars(r)["shorturl"]
-	skip, limit := getSkipAndLimit(r)
-	cd := &models.ClickDetails{
-		ShortURL: shortURL,
+func (s *Server) getClickDetailsHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Inside the getClickDetailsHandler")
+		shortURL := mux.Vars(r)["shorturl"]
+		skip, limit := getSkipAndLimit(r)
+		cd := &models.ClickDetails{
+			ShortURL: shortURL,
+		}
+		res, err := cd.GetTotalClicksDetails(skip, limit)
+		if err != nil {
+			log.Println("Error while calling GetClickDetails() : ", err)
+			return
+		}
+		if res == nil {
+			models.Respond(w, http.StatusBadRequest, models.Message(false, "No Data is found."))
+			return
+		}
+		resp := models.Message(true, "Success")
+		resp["data"] = res
+		models.Respond(w, http.StatusOK, resp)
+
 	}
-	res, err := cd.GetTotalClicksDetails(skip, limit)
-	if err != nil {
-		log.Println("Error while calling GetClickDetails() : ", err)
-		return
-	}
-	if res == nil {
-		models.Respond(w, http.StatusBadRequest, models.Message(false, "No Data is found."))
-		return
-	}
-	resp := models.Message(true, "Success")
-	resp["data"] = res
-	models.Respond(w, http.StatusOK, resp)
 }
 
 // DeleteClickDetailsHandler is used to delete all the details of a shorturl.
