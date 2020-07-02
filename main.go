@@ -5,7 +5,13 @@ import (
 	"net/http"
 	"os"
 	"short-url/handlers"
+
+	"github.com/gorilla/mux"
 )
+
+type server struct {
+	router *mux.Router
+}
 
 func main() {
 	// Get environment variables relating port, env i.e DEV or PROD, fullchain and privKey for
@@ -28,8 +34,8 @@ func main() {
 	log.SetOutput(file)
 
 	// Create a new router instance
-	s := handlers.NewServer()
-	s.Routes()
+	s := newServer()
+	s.routes()
 
 	// Starting Server.
 	log.Println("Starting Server at : ", port)
@@ -40,16 +46,49 @@ func main() {
 	if env == "PROD" {
 		go http.ListenAndServe(":80", http.HandlerFunc(redirectTLS))
 
-		log.Fatal(http.ListenAndServeTLS(":"+port, fullchain, privkey, s.Router))
+		log.Fatal(http.ListenAndServeTLS(":"+port, fullchain, privkey, s.router))
 
 	} else {
-		log.Fatal(http.ListenAndServe(":"+port, s.Router))
+		log.Fatal(http.ListenAndServe(":"+port, s.router))
 	}
 
 	// Closing th Mongo and Redis Client when the main() exits.
 	//defer models.GetMongoClient().Disconnect(context.TODO())
 	//defer models.GetRedisClient().Close()
 
+}
+
+func newServer() *server {
+	return &server{
+		router: mux.NewRouter(),
+	}
+}
+
+func (s *server) routes() {
+	// Adding a middel middlewas.routere to Log each request url and IP.
+	s.router.Use(handlers.LoggingMiddleware)
+	// Creating a file server object.
+	fs := http.FileServer(http.Dir("assets"))
+	s.router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
+
+	// Generate shorturl handles.router.
+	s.router.HandleFunc("/generate", handlers.GenerateHandler)
+	// Serving IndexHandler
+	s.router.HandleFunc("/", handlers.IndexHandler)
+
+	// API for Click Details:
+	s.router.HandleFunc("/api/v1/{shorturl}/{days}", handlers.TotalDetailsNdaysHandler).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/country/{country}", handlers.TotalDetailsByCountryHandler).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/city/{city}", handlers.TotalDetailsByCityHandler).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/ip/{ip}", handlers.TotalDetailsByIP).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/totalcount", handlers.TotalCountHandler).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/totalcount/{days}", handlers.TotalCountNdaysHandler).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/ip/{ip}/totalcount", handlers.ClickCountsByIP).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}", handlers.DeleteClickDetailsHandler).Methods(http.MethodDelete)
+	s.router.HandleFunc("/api/v1/{shorturl}", handlers.GetClickDetailsHandler()).Methods(http.MethodGet)
+
+	// Get the original url from shorturl
+	s.router.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
 }
 
 // redirectTLS redirects HTTP Request to HTTPS. It is called when the port

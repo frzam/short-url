@@ -117,7 +117,7 @@ func (url *URL) GetURL() (string, error) {
 		log.Println("Error while getting the document :", err)
 		return "", nil
 	}
-	_ = url.SetCacheURL()
+	_ = url.Set()
 	return url.OriginalURL, nil
 }
 
@@ -126,11 +126,9 @@ func (url *URL) GetURL() (string, error) {
 // If it is not present then then it calls GetIPInfo to call the api to get the ip detals.
 // Then it inserts the click details, and sets the caches the click details.
 func (url *URL) AddClickDetails(ip string) error {
-	fmt.Println("AddClickDetails()")
-	originalURL, _ := url.GetCacheURL()
-
+	_, _ = url.Get()
 	cd := &ClickDetails{
-		OriginalURL: originalURL,
+		OriginalURL: url.OriginalURL,
 		ShortURL:    url.ShortURL,
 		IPInfo:      GetIPInfo(ip),
 		CurrentTime: time.Now(),
@@ -141,7 +139,7 @@ func (url *URL) AddClickDetails(ip string) error {
 		return err
 	}
 	// If in cache don't again insert in cache. Otherwise
-	err = cd.SetCacheClickDetails()
+	err = cd.Set()
 	if err != nil {
 		log.Println("Error while Calling SetCacheClickDetails() ")
 	}

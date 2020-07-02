@@ -13,7 +13,7 @@ import (
 // GetClickDetailsHandler is used to get the click details for one particular shorturl.
 // It takes two optional params skip and limit.
 // Path: GET /api/v1/{shorturl}?skip=0&limit=100
-func (s *Server) getClickDetailsHandler() http.HandlerFunc {
+func GetClickDetailsHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Inside the getClickDetailsHandler")
 		shortURL := mux.Vars(r)["shorturl"]

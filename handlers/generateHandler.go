@@ -42,7 +42,7 @@ func GenerateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// It sets the newly generated url in cache for fast url retrival.
-	err = url.SetCacheURL()
+	err = url.Set()
 	if err != nil {
 		log.Println("Error while Calling SetCacheURL() : ", err)
 		return

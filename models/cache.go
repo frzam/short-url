@@ -36,38 +36,43 @@ func GetRedisClient() *redis.Client {
 	return rdb
 }
 
-// SetCacheURL is used to set the short-url with original url. It sets for 2 hours.
-func (url *URL) SetCacheURL() error {
-	return GetRedisClient().Set(ctx, url.ShortURL, url.OriginalURL, time.Hour*2).Err()
+type Cache interface {
+	Set() error
+	Get() error
 }
 
-// GetCacheURL is used to get the cache original url quickly.
-func (url *URL) GetCacheURL() (string, error) {
+// Set is used to set the short-url with original url. It sets for 2 hours.
+func (url *URL) Set() error {
+	return GetRedisClient().Set(ctx, url.ShortURL, []byte(fmt.Sprintf("%v", url)), time.Hour*2).Err()
+}
+
+// Get is used to get the cache original url quickly.
+func (url *URL) Get() (string, error) {
 	return GetRedisClient().Get(ctx, url.ShortURL).Result()
+
 }
 
-// GetCacheClickDetails is used to get the click details from cache.
-func (cd *ClickDetails) GetCacheClickDetails() error {
+// Get is used to get the click details from cache.
+func (cd *ClickDetails) Get() error {
 	return GetRedisClient().Get(ctx, cd.IPInfo.IP).Scan(&cd)
 }
 
-// SetCacheClickDetails is used to set the ip with with the clickDetails for 2 hours.
-func (cd *ClickDetails) SetCacheClickDetails() error {
+// Set is used to set the ip with with the clickDetails for 2 hours.
+func (cd *ClickDetails) Set() error {
 	return GetRedisClient().Set(ctx, cd.IPInfo.IP, []byte(fmt.Sprintf("%v", cd)), time.Hour*2).Err()
 }
 
-// GetCacheIPInfo is used to get the the IPInfo from ip or it returns the error.
-func GetCacheIPInfo(ip string) (IPInfo, error) {
-	var ipInfo IPInfo
-	res := GetRedisClient().Get(ctx, ip)
+// Get is used to get the the IPInfo from ip or it returns the error.
+func (ipInfo *IPInfo) Get() error {
+	res := GetRedisClient().Get(ctx, ipInfo.IP)
 	if res == nil {
-		return ipInfo, errors.New("Not Found")
+		return errors.New("Not Found")
 	}
-	res.Scan(&ipInfo)
-	return ipInfo, nil
+	return res.Scan(&ipInfo)
+
 }
 
-// SetCacheIPInfo is used to set the ip with ipInfo for two hours in cache.
-func (ipInfo IPInfo) setCacheIPInfo() error {
+// Set is used to set the ip with ipInfo for two hours in cache.
+func (ipInfo IPInfo) Set() error {
 	return GetRedisClient().Set(ctx, ipInfo.IP, []byte(fmt.Sprintf("%v", ipInfo)), time.Hour*2).Err()
 }

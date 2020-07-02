@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -24,25 +25,26 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	url := &models.URL{
 		ShortURL: shortURL,
 	}
-	var originalURL string
 	var err error
 	// Calling the Redis to get the cache value
-	originalURL, _ = url.GetCacheURL()
+	url.OriginalURL, _ = url.Get()
+	fmt.Println("originalURL from Cache : ", url.OriginalURL)
 	// If Not found then only call the MongoDB.
-	if originalURL == "" {
-		originalURL, err = url.GetURL()
+	if url.OriginalURL == "" {
+		url.OriginalURL, err = url.GetURL()
 		if err != nil {
 			log.Println("err : ", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	}
+	_ = url.Set()
 	// Get IP Address of the client.
 	ip := getIPAddress(r)
 	// Call AddClickDetails to Save the click details data in mongoDB.
 	_ = url.AddClickDetails(ip)
-
-	http.Redirect(w, r, originalURL, http.StatusFound)
+	fmt.Println("url.OriginalURL :", url.OriginalURL)
+	http.Redirect(w, r, url.OriginalURL, http.StatusFound)
 }
 
 // getIPAddress from the request.
