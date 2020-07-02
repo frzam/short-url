@@ -39,7 +39,7 @@ type URL struct {
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("Error while loading the .env file")
+		log.Println("Error while loading the .env file : ", err)
 	}
 	name := os.Getenv("primary_db_name")
 	host := os.Getenv("primary_db_host")
@@ -126,7 +126,7 @@ func (url *URL) GetURL() (string, error) {
 // If it is not present then then it calls GetIPInfo to call the api to get the ip detals.
 // Then it inserts the click details, and sets the caches the click details.
 func (url *URL) AddClickDetails(ip string) error {
-	_, _ = url.Get()
+	_ = url.Get()
 	cd := &ClickDetails{
 		OriginalURL: url.OriginalURL,
 		ShortURL:    url.ShortURL,

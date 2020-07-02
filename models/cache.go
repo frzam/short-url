@@ -47,9 +47,14 @@ func (url *URL) Set() error {
 }
 
 // Get is used to get the cache original url quickly.
-func (url *URL) Get() (string, error) {
-	return GetRedisClient().Get(ctx, url.ShortURL).Result()
-
+func (url *URL) Get() error {
+	res := GetRedisClient().Get(ctx, url.ShortURL)
+	err := res.Scan(url)
+	if err != nil {
+		fmt.Println("Error in Get() : ", err)
+	}
+	fmt.Println("url inside Get() : ", url)
+	return err
 }
 
 // Get is used to get the click details from cache.

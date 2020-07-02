@@ -10,7 +10,11 @@ import (
 )
 
 // Creating a template instance so that we can execute our data into it.
-var tpl = template.Must(template.ParseFiles("index.html"))
+var tpl *template.Template
+
+func init() {
+	tpl = template.Must(template.ParseFiles("assets/html/index.html"))
+}
 
 // IndexHandler is used to handle "/" path (HOME).
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +32,7 @@ func Redirect() http.HandlerFunc {
 		}
 		var err error
 		// Calling the Redis to get the cache value
-		url.OriginalURL, _ = url.Get()
+		_ = url.Get()
 		fmt.Println("originalURL from Cache : ", url.OriginalURL)
 		// If Not found then only call the MongoDB.
 		if url.OriginalURL == "" {
@@ -39,7 +43,6 @@ func Redirect() http.HandlerFunc {
 				return
 			}
 		}
-		_ = url.Set()
 		// Get IP Address of the client.
 		ip := getIPAddress(r)
 		// Call AddClickDetails to Save the click details data in mongoDB.
