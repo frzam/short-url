@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"short-url/handlers"
+	"short-url/models"
 
 	"github.com/gorilla/mux"
 )
@@ -53,8 +55,8 @@ func main() {
 	}
 
 	// Closing th Mongo and Redis Client when the main() exits.
-	//defer models.GetMongoClient().Disconnect(context.TODO())
-	//defer models.GetRedisClient().Close()
+	defer models.GetMongoClient().Disconnect(context.TODO())
+	defer models.GetRedisClient().Close()
 
 }
 
@@ -77,18 +79,18 @@ func (s *server) routes() {
 	s.router.HandleFunc("/", handlers.IndexHandler)
 
 	// API for Click Details:
-	s.router.HandleFunc("/api/v1/{shorturl}/{days}", handlers.TotalDetailsNdaysHandler).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}/country/{country}", handlers.TotalDetailsByCountryHandler).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}/city/{city}", handlers.TotalDetailsByCityHandler).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}/ip/{ip}", handlers.TotalDetailsByIP).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}/totalcount", handlers.TotalCountHandler).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}/totalcount/{days}", handlers.TotalCountNdaysHandler).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}/ip/{ip}/totalcount", handlers.ClickCountsByIP).Methods(http.MethodGet)
-	s.router.HandleFunc("/api/v1/{shorturl}", handlers.DeleteClickDetailsHandler).Methods(http.MethodDelete)
+	s.router.HandleFunc("/api/v1/{shorturl}/{days}", handlers.TotalDetailsNdaysHandler()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/country/{country}", handlers.TotalDetailsByCountryHandler()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/city/{city}", handlers.TotalDetailsByCityHandler()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/ip/{ip}", handlers.TotalDetailsByIP()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/totalcount", handlers.TotalCountHandler()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/totalcount/{days}", handlers.TotalCountNdaysHandler()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}/ip/{ip}/totalcount", handlers.ClickCountsByIP()).Methods(http.MethodGet)
+	s.router.HandleFunc("/api/v1/{shorturl}", handlers.DeleteClickDetailsHandler()).Methods(http.MethodDelete)
 	s.router.HandleFunc("/api/v1/{shorturl}", handlers.GetClickDetailsHandler()).Methods(http.MethodGet)
 
 	// Get the original url from shorturl
-	s.router.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect)
+	s.router.HandleFunc("/{[a-zA-Z0-9_.-]*}", handlers.Redirect())
 }
 
 // redirectTLS redirects HTTP Request to HTTPS. It is called when the port

@@ -20,31 +20,34 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 // Redirect will the shorturl part from the url then create a url instance and check the RedisCache
 // If data is present then it will update the ClickDetails. After the updation it will redirect to
 // Original url.
-func Redirect(w http.ResponseWriter, r *http.Request) {
-	shortURL := r.URL.Path[1:]
-	url := &models.URL{
-		ShortURL: shortURL,
-	}
-	var err error
-	// Calling the Redis to get the cache value
-	url.OriginalURL, _ = url.Get()
-	fmt.Println("originalURL from Cache : ", url.OriginalURL)
-	// If Not found then only call the MongoDB.
-	if url.OriginalURL == "" {
-		url.OriginalURL, err = url.GetURL()
-		if err != nil {
-			log.Println("err : ", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+func Redirect() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		shortURL := r.URL.Path[1:]
+		url := &models.URL{
+			ShortURL: shortURL,
 		}
+		var err error
+		// Calling the Redis to get the cache value
+		url.OriginalURL, _ = url.Get()
+		fmt.Println("originalURL from Cache : ", url.OriginalURL)
+		// If Not found then only call the MongoDB.
+		if url.OriginalURL == "" {
+			url.OriginalURL, err = url.GetURL()
+			if err != nil {
+				log.Println("err : ", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		}
+		_ = url.Set()
+		// Get IP Address of the client.
+		ip := getIPAddress(r)
+		// Call AddClickDetails to Save the click details data in mongoDB.
+		_ = url.AddClickDetails(ip)
+		fmt.Println("url.OriginalURL :", url.OriginalURL)
+		http.Redirect(w, r, url.OriginalURL, http.StatusFound)
 	}
-	_ = url.Set()
-	// Get IP Address of the client.
-	ip := getIPAddress(r)
-	// Call AddClickDetails to Save the click details data in mongoDB.
-	_ = url.AddClickDetails(ip)
-	fmt.Println("url.OriginalURL :", url.OriginalURL)
-	http.Redirect(w, r, url.OriginalURL, http.StatusFound)
+
 }
 
 // getIPAddress from the request.
